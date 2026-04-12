@@ -1,5 +1,6 @@
 #include "../../minishell.h"
 
+//mesela "ls|grep a -> ls | grep a" gelirse her birini ayrı token a ayırıyor
 char	*add_spaces(char *line)
 {
 	char	*res;

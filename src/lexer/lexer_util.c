@@ -3,7 +3,7 @@
 int	is_operator(char c)
 {
 	return (c == '|' || c == '<' || c == '>');
-} //başka operatör gelemez mi?
+} 
 
 size_t	get_spaced_len(char *line)
 {
