@@ -68,4 +68,14 @@ size_t	get_spaced_len(char *line);
 int		print_syntax_error(const char *token);
 int		validate_lexer_syntax(char **args);
 
+void	execute_cmd(t_cmd *cmd, t_shell *shell);
+int		is_builtin(const char *cmd);
+void	execute_builtin(t_cmd *cmd, t_shell *shell);
+void	execute_single(t_cmd *cmd, char **envp);
+
+char	**find_path(char **envp);
+char	*find_command(char **paths, char *cmd);
+char	*resolve_path(char *cmd, char **envp);
+void	free_array(char **arr);
+
 #endif

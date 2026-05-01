@@ -18,7 +18,8 @@ void execute_single(t_cmd *cmd, char **envp)
     cmd->cmd_path = resolve_path(cmd->argv[0], envp);
     if (!cmd->cmd_path)
     {
-        write(2, "command not found\n", 19);
+        write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
+        write(2, ": command not found\n", 21);
         return;
     }
 
