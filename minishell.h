@@ -31,6 +31,8 @@ typedef struct s_token
 typedef struct s_redir
 {
 	char			*file; //redirs deki file ı tutar
+	char			*delimiter;
+	int				fd;
 	t_token_type	type;
 	struct s_redir	*next;
 }t_redir;
@@ -38,6 +40,8 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char			**argv; //komutun ismi ve yolu
+	char			*cmd_path;
+	int				is_builtin;
 	t_redir			*redirs; // cat < file 
 	struct s_cmd	*next;
 }t_cmd;
