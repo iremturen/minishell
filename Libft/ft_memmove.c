@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/11 14:36:30 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 00:03:55 by azkaraka         ###   ########.fr       */
+/*   Created: 2025/06/25 12:37:36 by azkaraka          #+#    #+#             */
+/*   Updated: 2025/06/25 15:19:00 by azkaraka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	char		*substr;
-	size_t		s_len;
-
-	if (!s)
+	if (!dest && !src)
 		return (NULL);
-	s_len = ft_strlen(s);
-	if (start >= s_len)
-		return (ft_strdup(""));
-	if (start + len > s_len)
-		len = s_len - start;
-	substr = (char *)malloc(sizeof(char) * (len + 1));
-	if (!substr)
-		return (NULL);
-	ft_strlcpy(substr, s + start, len + 1);
-	return (substr);
+	if (dest < src)
+		ft_memcpy(dest, src, n);
+	else if (dest > src)
+	{
+		while (n--)
+			*((unsigned char *)(dest + n)) = *((unsigned char *)(src + n));
+	}
+	return (dest);
 }
