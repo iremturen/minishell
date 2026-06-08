@@ -1,27 +1,36 @@
 #include "minishell.h"
 
-static void	free_args(char **args)
+// her satiri ilgili katmanlara gonderip sonuclari temizliyor
+static void	run_line(char *line, t_shell *shell)
 {
-	int	i;
+	t_token	*tokens;
+	t_cmd	*cmds;
 
-	i = 0;
-	while (args && args[i])
+	tokens = tokenize(line);
+	if (!tokens)
+		return ;
+	handle_quotes(tokens);
+	expand_tokens(tokens, shell);
+	cmds = parse(tokens);
+	if (cmds)
 	{
-		free(args[i]);
-		i++;
+		execute_cmd(cmds, shell);
+		free_cmds(cmds);
 	}
-	free(args);
+	free_tokens(tokens);
 }
 
+// ana dongu: readline ile satir aliyor, isleme sokuyor
 int	main(int argc, char **argv, char **env)
 {
+	t_shell	*shell;
 	char	*line;
-	char	**args;
 
 	(void)argc;
 	(void)argv;
-	(void)env;
-
+	shell = init_shell(env);
+	if (!shell)
+		return (1);
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -30,14 +39,10 @@ int	main(int argc, char **argv, char **env)
 		if (*line)
 		{
 			add_history(line);
-			args = split_inputs(line);
-			if (args)
-			{
-				validate_lexer_syntax(args);
-				free_args(args);
-			}
+			run_line(line, shell);
 		}
 		free(line);
 	}
+	free_shell(shell);
 	return (0);
 }
