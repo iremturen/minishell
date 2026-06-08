@@ -1,0 +1,24 @@
+# 42 subject PDF (turn-in'e dahil değil)
+en.subject.pdf
+
+# Derlenmiş dosyalar
+*.o
+*.a
+
+# Çalıştırılabilir binary
+minishell
+
+# macOS sistem dosyaları
+.DS_Store
+
+# Vim geçici dosyaları
+*.swp
+*.swo
+.*.swp
+
+# VSCode
+.vscode/
+
+# Geliştirme notları / plan dosyaları (proje dışı)
+*.md
+!README.md
