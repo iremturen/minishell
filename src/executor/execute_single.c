@@ -4,7 +4,7 @@
 // echo hello
 // cat file.txt
 
-#include "minishell.h"
+#include "../../minishell.h"
 #include <sys/wait.h>
 
 void execute_single(t_cmd *cmd, char **envp)
