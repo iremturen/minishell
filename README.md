@@ -72,11 +72,6 @@ The shell displays a prompt and waits for commands. It supports command history 
   - `env` with no options or arguments
   - `exit` with no options
 
-### Bonus
-
-- `&&` and `||` with parenthesis for priority grouping
-- Wildcard `*` expansion for the current working directory
-
 ---
 
 ## Project Structure
