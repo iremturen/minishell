@@ -91,7 +91,7 @@ void		handle_quotes(t_token *head);
 // executor
 void		execute_cmd(t_cmd *cmd, t_shell *shell);
 void		execute_builtin(t_cmd *cmd, t_shell *shell);
-void		execute_single(t_cmd *cmd, char **envp);
+void		execute_single(t_cmd *cmd, t_shell *shell);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
