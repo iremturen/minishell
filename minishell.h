@@ -81,6 +81,8 @@ void		free_array(char **arr);
 // parser
 t_cmd		*parse(t_token *tokens);
 void		free_cmds(t_cmd *head);
+t_redir		*new_redir(t_token_type type, char *file);
+int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file);
 
 // expander
 void		expand_tokens(t_token *head, t_shell *shell);

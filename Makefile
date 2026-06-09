@@ -22,7 +22,8 @@ LEXER_SRCS	= \
 
 # ── Parser ───────────────────────────────────────────────
 PARSER_SRCS	= \
-	src/parser/parser.c
+	src/parser/parser.c \
+	src/parser/parser_redir.c
 
 # ── Expander ─────────────────────────────────────────────
 EXPANDER_SRCS	= \
