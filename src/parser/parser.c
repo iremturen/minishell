@@ -20,6 +20,8 @@ static t_cmd	*new_cmd(void)
 void	free_cmds(t_cmd *head)
 {
 	t_cmd	*next;
+	t_redir	*redir;
+	t_redir	*rnext;
 	int		i;
 
 	while (head)
@@ -31,6 +33,15 @@ void	free_cmds(t_cmd *head)
 			while (head->argv[i])
 				free(head->argv[i++]);
 			free(head->argv);
+		}
+		redir = head->redirs;
+		while (redir)
+		{
+			rnext = redir->next;
+			free(redir->file);
+			free(redir->delimiter);
+			free(redir);
+			redir = rnext;
 		}
 		free(head->cmd_path);
 		free(head);
@@ -81,35 +92,53 @@ static int	cmd_add_arg(t_cmd *cmd, char *word)
 	return (1);
 }
 
-// tok_word tokenlarini alip cmd->argv ye ekliyor
-// pipe ve redir buraya sonra eklenecek
+// redir tokenini isliyip sonraki tokeni dosya adi olarak aliyor
+static int	handle_redir(t_cmd *cmd, t_token **cur)
+{
+	t_token_type	type;
+
+	type = (*cur)->type;
+	*cur = (*cur)->next;
+	if (!(*cur) || (*cur)->type != TOK_WORD)
+		return (0);
+	if (!cmd_add_redir(cmd, type, (*cur)->value))
+		return (0);
+	return (1);
+}
+
+// tok_word, tok_pipe ve tok_redir tokenlarini isliyor
 t_cmd	*parse(t_token *tokens)
 {
-	t_cmd	*cmd;
-	t_token	*cur;
+	t_cmd	*head;
+	t_cmd	*cur;
+	t_token	*tok;
 
 	if (!tokens)
 		return (NULL);
-	cmd = new_cmd();
-	if (!cmd)
+	head = new_cmd();
+	if (!head)
 		return (NULL);
-	cur = tokens;
-	while (cur)
+	cur = head;
+	tok = tokens;
+	while (tok)
 	{
-		if (cur->type == TOK_WORD)
+		if (tok->type == TOK_WORD)
 		{
-			if (!cmd_add_arg(cmd, cur->value))
-			{
-				free_cmds(cmd);
-				return (NULL);
-			}
+			if (!cmd_add_arg(cur, tok->value))
+				return (free_cmds(head), NULL);
 		}
-		cur = cur->next;
+		else if (tok->type == TOK_PIPE)
+		{
+			cur->next = new_cmd();
+			if (!cur->next)
+				return (free_cmds(head), NULL);
+			cur = cur->next;
+		}
+		else if (!handle_redir(cur, &tok))
+			return (free_cmds(head), NULL);
+		tok = tok->next;
 	}
-	if (!cmd->argv)
-	{
-		free_cmds(cmd);
-		return (NULL);
-	}
-	return (cmd);
+	if (!head->argv)
+		return (free_cmds(head), NULL);
+	return (head);
 }
