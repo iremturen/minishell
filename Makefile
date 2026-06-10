@@ -36,6 +36,7 @@ EXECUTOR_SRCS	= \
 	src/executor/execute_single.c \
 	src/executor/execute_pipeline.c \
 	src/executor/path_utils.c \
+	src/executor/redir.c \
 	src/executor/builtins/builtin_executor.c \
 	src/executor/builtins/builtin_utils.c
 
