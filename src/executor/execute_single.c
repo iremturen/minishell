@@ -32,6 +32,8 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 	}
 	if (pid == 0)
 	{
+		if (!apply_redirs(cmd->redirs))
+			exit(1);
 		execve(cmd->cmd_path, cmd->argv, shell->envp);
 		perror("execve");
 		exit(1);
