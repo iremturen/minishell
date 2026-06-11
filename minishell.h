@@ -93,6 +93,7 @@ void		handle_quotes(t_token *head);
 void		execute_cmd(t_cmd *cmd, t_shell *shell);
 void		execute_builtin(t_cmd *cmd, t_shell *shell);
 void		execute_single(t_cmd *cmd, t_shell *shell);
+void		execute_pipeline(t_cmd *cmds, t_shell *shell);
 int			apply_redirs(t_redir *redir);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
