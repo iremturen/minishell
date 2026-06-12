@@ -1,22 +1,18 @@
 #include "../../../minishell.h"
 
-void	builtin_cd(t_cmd *cmd, t_shell *shell)
-{
-	(void)shell;
-	if (!cmd->argv[1])
-	{
-		write(2, "cd: missing argument\n", 21);
-		return ;
-	}
-	if (chdir(cmd->argv[1]) == -1)
-		perror("cd");
-}
-
+// echo: -n bayragini destekliyor, argumansiz satir sonunu yazıyor
 void	builtin_echo(char **argv)
 {
 	int	i;
+	int	newline;
 
 	i = 1;
+	newline = 1;
+	if (argv[1] && ft_strncmp(argv[1], "-n", 3) == 0)
+	{
+		newline = 0;
+		i = 2;
+	}
 	while (argv[i])
 	{
 		write(1, argv[i], ft_strlen(argv[i]));
@@ -24,9 +20,11 @@ void	builtin_echo(char **argv)
 			write(1, " ", 1);
 		i++;
 	}
-	write(1, "\n", 1);
+	if (newline)
+		write(1, "\n", 1);
 }
 
+// pwd: gecerli calisma dizinini yazıyor
 void	builtin_pwd(void)
 {
 	char	cwd[1024];
@@ -40,6 +38,7 @@ void	builtin_pwd(void)
 		perror("pwd");
 }
 
+// env: envp deki tum degiskenleri yazıyor
 void	builtin_env(char **envp)
 {
 	int	i;
@@ -53,35 +52,27 @@ void	builtin_env(char **envp)
 	}
 }
 
-void	builtin_unset(t_cmd *cmd, t_shell *shell)
+// exit: verilen argumani exit kodu olarak kullaniyor
+void	builtin_exit(t_cmd *cmd, t_shell *shell)
 {
-	(void)cmd;
-	(void)shell;
-	// TODO: shell->envp içinden ilgili anahtarı sil
-}
-
-void	builtin_exit(t_shell *shell)
-{
-	(void)shell;
 	write(1, "exit\n", 5);
-	exit(0);
+	if (!cmd->argv[1])
+		exit(shell->last_exit);
+	exit(ft_atoi(cmd->argv[1]));
 }
 
+// is_builtin: komut adinin builtin olup olmadigini kontrol ediyor
 int	is_builtin(char *cmd)
 {
 	if (!cmd)
 		return (0);
-	if (!ft_strncmp(cmd, "cd", 3))
+	if (!ft_strncmp(cmd, "echo", 5) || !ft_strncmp(cmd, "pwd", 4))
 		return (1);
-	if (!ft_strncmp(cmd, "echo", 5))
+	if (!ft_strncmp(cmd, "env", 4) || !ft_strncmp(cmd, "exit", 5))
 		return (1);
-	if (!ft_strncmp(cmd, "pwd", 4))
+	if (!ft_strncmp(cmd, "cd", 3) || !ft_strncmp(cmd, "unset", 6))
 		return (1);
-	if (!ft_strncmp(cmd, "unset", 6))
-		return (1);
-	if (!ft_strncmp(cmd, "env", 4))
-		return (1);
-	if (!ft_strncmp(cmd, "exit", 5))
+	if (!ft_strncmp(cmd, "export", 7))
 		return (1);
 	return (0);
 }
