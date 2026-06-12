@@ -9,8 +9,8 @@ static void	run_line(char *line, t_shell *shell)
 	tokens = tokenize(line);
 	if (!tokens)
 		return ;
-	handle_quotes(tokens);
 	expand_tokens(tokens, shell);
+	handle_quotes(tokens);
 	cmds = parse(tokens);
 	if (cmds)
 	{
