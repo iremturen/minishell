@@ -101,11 +101,13 @@ char		*resolve_path(char *cmd, char **envp);
 
 // builtins
 int			is_builtin(char *cmd);
-void		builtin_cd(t_cmd *cmd, t_shell *shell);
 void		builtin_echo(char **argv);
 void		builtin_pwd(void);
 void		builtin_env(char **envp);
+void		builtin_exit(t_cmd *cmd, t_shell *shell);
+void		builtin_cd(t_cmd *cmd, t_shell *shell);
 void		builtin_unset(t_cmd *cmd, t_shell *shell);
-void		builtin_exit(t_shell *shell);
+void		builtin_export(t_cmd *cmd, t_shell *shell);
+int			env_set(t_shell *shell, char *key, char *val);
 
 #endif
