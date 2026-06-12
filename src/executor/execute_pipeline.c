@@ -13,8 +13,10 @@ static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 		builtin_cd(cmd, shell);
 	else if (!ft_strncmp(cmd->argv[0], "unset", 6))
 		builtin_unset(cmd, shell);
+	else if (!ft_strncmp(cmd->argv[0], "export", 7))
+		builtin_export(cmd, shell);
 	else if (!ft_strncmp(cmd->argv[0], "exit", 5))
-		builtin_exit(shell);
+		builtin_exit(cmd, shell);
 	exit(shell->last_exit);
 }
 

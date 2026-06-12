@@ -27,7 +27,7 @@ static void	restore_fds(int sin, int sout)
 	close(sout);
 }
 
-// builtin i redir uygulayarak calistiriyor, sonra fd leri geri yukluyor
+// builtin i redir uygulayarak calistiriyor, fd leri geri yukluyor
 void	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
 	int	sin;
@@ -35,17 +35,19 @@ void	execute_builtin(t_cmd *cmd, t_shell *shell)
 
 	if (!save_and_redir(cmd, &sin, &sout))
 		return ;
-	if (!ft_strncmp(cmd->argv[0], "cd", 3))
-		builtin_cd(cmd, shell);
+	if (!ft_strncmp(cmd->argv[0], "echo", 5))
+		builtin_echo(cmd->argv);
 	else if (!ft_strncmp(cmd->argv[0], "pwd", 4))
 		builtin_pwd();
-	else if (!ft_strncmp(cmd->argv[0], "echo", 5))
-		builtin_echo(cmd->argv);
 	else if (!ft_strncmp(cmd->argv[0], "env", 4))
 		builtin_env(shell->envp);
+	else if (!ft_strncmp(cmd->argv[0], "cd", 3))
+		builtin_cd(cmd, shell);
 	else if (!ft_strncmp(cmd->argv[0], "unset", 6))
 		builtin_unset(cmd, shell);
+	else if (!ft_strncmp(cmd->argv[0], "export", 7))
+		builtin_export(cmd, shell);
 	else if (!ft_strncmp(cmd->argv[0], "exit", 5))
-		builtin_exit(shell);
+		builtin_exit(cmd, shell);
 	restore_fds(sin, sout);
 }
