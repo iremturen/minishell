@@ -10,7 +10,8 @@ LIBFT		= Libft/libft.a
 
 # ── Init ─────────────────────────────────────────────────
 INIT_SRCS	= \
-	src/init/init.c
+	src/init/init.c \
+	src/init/signals.c
 
 # ── Lexer ────────────────────────────────────────────────
 LEXER_SRCS	= \

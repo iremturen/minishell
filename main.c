@@ -31,18 +31,23 @@ int	main(int argc, char **argv, char **env)
 	shell = init_shell(env);
 	if (!shell)
 		return (1);
+	setup_signals_interactive();
 	while (1)
 	{
 		line = readline("minishell$ ");
 		if (!line)
+		{
+			write(1, "exit\n", 5);
 			break ;
+		}
 		if (*line)
 		{
 			add_history(line);
 			run_line(line, shell);
 		}
+		g_signal = 0;
 		free(line);
 	}
 	free_shell(shell);
-	return (0);
+	return (shell->last_exit);
 }

@@ -5,10 +5,14 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <signal.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "Libft/libft.h"
+
+// sinyal: max 1 global degisken
+extern int	g_signal;
 
 // token tipleri: kelime, pipe, yonlendirme operatorleri
 typedef enum e_token_type
@@ -67,6 +71,8 @@ typedef struct s_shell
 // init
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
+void		setup_signals_interactive(void);
+void		setup_signals_child(void);
 
 // lexer
 t_token		*tokenize(char *line);
