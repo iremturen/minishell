@@ -8,6 +8,21 @@ static void	cmd_not_found(t_cmd *cmd, t_shell *shell)
 	shell->last_exit = 127;
 }
 
+// child bitince exit durumunu last_exit e yazar
+static void	update_exit_status(int status, t_shell *shell)
+{
+	if (WIFEXITED(status))
+		shell->last_exit = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		shell->last_exit = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGQUIT)
+			write(2, "Quit: 3\n", 8);
+		else if (WTERMSIG(status) == SIGINT)
+			write(1, "\n", 1);
+	}
+}
+
 // tek bir dis komutu fork ile calistiriyor, last_exit i gunceller
 void	execute_single(t_cmd *cmd, t_shell *shell)
 {
@@ -32,6 +47,7 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 	}
 	if (pid == 0)
 	{
+		setup_signals_child();
 		if (!apply_redirs(cmd->redirs))
 			exit(1);
 		execve(cmd->cmd_path, cmd->argv, shell->envp);
@@ -41,6 +57,5 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 	waitpid(pid, &status, 0);
 	free(cmd->cmd_path);
 	cmd->cmd_path = NULL;
-	if (WIFEXITED(status))
-		shell->last_exit = WEXITSTATUS(status);
+	update_exit_status(status, shell);
 }
