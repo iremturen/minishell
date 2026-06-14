@@ -23,6 +23,7 @@ static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 // child sureci: fd leri ayarlar, redir uygular, komutu calistirip cikiyor
 static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 {
+	setup_signals_child();
 	if (in_fd != -1)
 	{
 		dup2(in_fd, STDIN_FILENO);
@@ -74,12 +75,19 @@ static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
 	int	i;
 
 	i = 0;
+	status = 0;
 	while (i < n)
 	{
 		waitpid(pids[i], &status, 0);
-		if (i == n - 1 && WIFEXITED(status))
-			shell->last_exit = WEXITSTATUS(status);
 		i++;
+	}
+	if (WIFEXITED(status))
+		shell->last_exit = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		shell->last_exit = 128 + WTERMSIG(status);
+		if (WTERMSIG(status) == SIGINT)
+			write(1, "\n", 1);
 	}
 }
 
