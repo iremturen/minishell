@@ -41,12 +41,14 @@ static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 	cmd->cmd_path = resolve_path(cmd->argv[0], shell->envp);
 	if (!cmd->cmd_path)
 	{
+		write(2, "minishell: ", 11);
 		write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
 		write(2, ": command not found\n", 20);
 		exit(127);
 	}
 	execve(cmd->cmd_path, cmd->argv, shell->envp);
-	perror("execve");
+	if (errno == EACCES)
+		exit(126);
 	exit(1);
 }
 

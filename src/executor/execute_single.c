@@ -1,11 +1,20 @@
 #include "../../minishell.h"
 
-// komut bulunamazsa hata yazdirir ve last_exit i 127 yapar
+// komut yok ya da izinsiz: 127/126 ile hata yazdirir
 static void	cmd_not_found(t_cmd *cmd, t_shell *shell)
 {
+	write(2, "minishell: ", 11);
 	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	write(2, ": command not found\n", 20);
-	shell->last_exit = 127;
+	if (ft_strchr(cmd->argv[0], '/') && access(cmd->argv[0], F_OK) == 0)
+	{
+		write(2, ": Permission denied\n", 20);
+		shell->last_exit = 126;
+	}
+	else
+	{
+		write(2, ": command not found\n", 20);
+		shell->last_exit = 127;
+	}
 }
 
 // child bitince exit durumunu last_exit e yazar
@@ -51,7 +60,8 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 		if (!apply_redirs(cmd->redirs))
 			exit(1);
 		execve(cmd->cmd_path, cmd->argv, shell->envp);
-		perror("execve");
+		if (errno == EACCES)
+			exit(126);
 		exit(1);
 	}
 	waitpid(pid, &status, 0);
