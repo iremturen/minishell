@@ -6,7 +6,13 @@ static void	run_line(char *line, t_shell *shell)
 	t_token	*tokens;
 	t_cmd	*cmds;
 
-	tokens = tokenize(line);
+	if (has_unclosed_quotes(line))
+	{
+		write(2, "minishell: syntax error: unexpected EOF\n", 40);
+		shell->last_exit = 2;
+		return ;
+	}
+	tokens = tokenize(line, shell);
 	if (!tokens)
 		return ;
 	expand_tokens(tokens, shell);

@@ -5,6 +5,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <errno.h>
 # include <signal.h>
 # include <sys/wait.h>
 # include <readline/readline.h>
@@ -75,7 +76,7 @@ void		setup_signals_interactive(void);
 void		setup_signals_child(void);
 
 // lexer
-t_token		*tokenize(char *line);
+t_token		*tokenize(char *line, t_shell *shell);
 void		free_tokens(t_token *head);
 int			is_operator(char c);
 size_t		get_spaced_len(char *line);
@@ -83,6 +84,7 @@ char		*add_spaces(char *line);
 char		**split_inputs(char *line);
 int			validate_lexer_syntax(char **args);
 int			print_syntax_error(const char *token);
+int			has_unclosed_quotes(char *line);
 void		free_array(char **arr);
 
 // parser

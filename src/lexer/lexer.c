@@ -1,22 +1,6 @@
 #include "../../minishell.h"
 
-// token stringine bakarak tipini belirliyor
-static t_token_type	token_type_of(char *value)
-{
-	if (ft_strncmp(value, ">>", 3) == 0)
-		return (TOK_APPEND);
-	if (ft_strncmp(value, "<<", 3) == 0)
-		return (TOK_HEREDOC);
-	if (ft_strncmp(value, "|", 2) == 0)
-		return (TOK_PIPE);
-	if (ft_strncmp(value, ">", 2) == 0)
-		return (TOK_REDIR_OUT);
-	if (ft_strncmp(value, "<", 2) == 0)
-		return (TOK_REDIR_IN);
-	return (TOK_WORD);
-}
-
-// yeni bir token dugumu olusturuyor ve deger ile tipi set ediyor
+// yeni token dugumu olusturuyor, tipi satir icerigine gore belirleniyor
 static t_token	*new_token(char *value)
 {
 	t_token	*tok;
@@ -30,12 +14,23 @@ static t_token	*new_token(char *value)
 		free(tok);
 		return (NULL);
 	}
-	tok->type = token_type_of(value);
 	tok->next = NULL;
+	if (!ft_strncmp(value, ">>", 3))
+		tok->type = TOK_APPEND;
+	else if (!ft_strncmp(value, "<<", 3))
+		tok->type = TOK_HEREDOC;
+	else if (!ft_strncmp(value, "|", 2))
+		tok->type = TOK_PIPE;
+	else if (!ft_strncmp(value, ">", 2))
+		tok->type = TOK_REDIR_OUT;
+	else if (!ft_strncmp(value, "<", 2))
+		tok->type = TOK_REDIR_IN;
+	else
+		tok->type = TOK_WORD;
 	return (tok);
 }
 
-// bagli listeye token ekliyor, hata durumunda temizleyip null donuyor
+// bagli listeye token ekliyor, hata durumunda null doner
 static t_token	*append_token(t_token **head, t_token **tail, char *word)
 {
 	t_token	*tok;
@@ -51,22 +46,13 @@ static t_token	*append_token(t_token **head, t_token **tail, char *word)
 	return (tok);
 }
 
-// ham satiri once split ediyor, syntax kontrolü yapiyor, token listesi donuyor
-t_token	*tokenize(char *line)
+// words dizisinden token bagli listesi olusturuyor
+static t_token	*build_token_list(char **words)
 {
-	char	**words;
 	t_token	*head;
 	t_token	*tail;
 	int		i;
 
-	words = split_inputs(line);
-	if (!words)
-		return (NULL);
-	if (validate_lexer_syntax(words) != 0)
-	{
-		free_array(words);
-		return (NULL);
-	}
 	head = NULL;
 	tail = NULL;
 	i = 0;
@@ -75,13 +61,31 @@ t_token	*tokenize(char *line)
 		if (!append_token(&head, &tail, words[i]))
 		{
 			free_tokens(head);
-			free_array(words);
 			return (NULL);
 		}
 		i++;
 	}
-	free_array(words);
 	return (head);
+}
+
+// satiri tokenize eder; syntax hatasi icin last_exit=2 set eder
+t_token	*tokenize(char *line, t_shell *shell)
+{
+	char	**words;
+	t_token	*tokens;
+
+	words = split_inputs(line);
+	if (!words)
+		return (NULL);
+	if (validate_lexer_syntax(words) != 0)
+	{
+		shell->last_exit = 2;
+		free_array(words);
+		return (NULL);
+	}
+	tokens = build_token_list(words);
+	free_array(words);
+	return (tokens);
 }
 
 // token listesini baslindan sonuna kadar temizliyor
