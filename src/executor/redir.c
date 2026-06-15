@@ -1,5 +1,12 @@
 #include "../../minishell.h"
 
+// heredoc sirasindaki sigint: g_signal set eder, satir atlayip cikiyor
+static void	heredoc_sigint(int sig)
+{
+	g_signal = sig;
+	write(1, "\n", 1);
+}
+
 // yonlendirme tipine gore dosyayi uygun modda aciyor
 static int	open_redir(t_redir *r)
 {
@@ -37,20 +44,21 @@ static int	apply_single_redir(t_redir *r)
 	return (1);
 }
 
-// heredoc: delimiter gelene kadar satir satir okuyor, pipe e yaziyor
+// heredoc: delimiter gelene kadar satir satir okuyor, ctrl+c yi destekliyor
 static int	heredoc_read(char *delim)
 {
 	int		pipefd[2];
 	char	*line;
 	size_t	dlen;
 
+	signal(SIGINT, heredoc_sigint);
 	if (pipe(pipefd) == -1)
 		return (-1);
 	dlen = ft_strlen(delim);
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || ft_strncmp(line, delim, dlen + 1) == 0)
+		if (!line || g_signal || ft_strncmp(line, delim, dlen + 1) == 0)
 		{
 			free(line);
 			break ;
@@ -60,7 +68,10 @@ static int	heredoc_read(char *delim)
 		free(line);
 	}
 	close(pipefd[1]);
-	return (pipefd[0]);
+	if (!g_signal)
+		return (pipefd[0]);
+	close(pipefd[0]);
+	return (-1);
 }
 
 // redir listesini siraya gore uygular, basarisizlikta 0 doner
@@ -73,6 +84,7 @@ int	apply_redirs(t_redir *redir)
 		if (redir->type == TOK_HEREDOC)
 		{
 			fd = heredoc_read(redir->file);
+			setup_signals_interactive();
 			if (fd == -1)
 				return (0);
 			if (dup2(fd, STDIN_FILENO) == -1)
