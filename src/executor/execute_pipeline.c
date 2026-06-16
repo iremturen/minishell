@@ -61,6 +61,8 @@ static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 	if (pid == -1)
 	{
 		perror("fork");
+		if (out_fd != -1)
+			close(out_fd);
 		return (-1);
 	}
 	if (pid == 0)
@@ -70,7 +72,7 @@ static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 	return (pid);
 }
 
-// tum alt surecleri bekler, son exit kodunu gunceller
+// tum alt surecleri bekler, gecersiz pid leri atlar, son exit kodunu gunceller
 static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
 {
 	int	status;
@@ -80,7 +82,8 @@ static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
 	status = 0;
 	while (i < n)
 	{
-		waitpid(pids[i], &status, 0);
+		if (pids[i] > 0)
+			waitpid(pids[i], &status, 0);
 		i++;
 	}
 	if (WIFEXITED(status))
