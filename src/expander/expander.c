@@ -96,14 +96,14 @@ static char	*build_expanded(char *str, t_shell *shell)
 	return (res);
 }
 
-// her tok_word icin build_expanded cagirip degeri gunceller
+// her tok_word icin build_expanded cagirip degeri gunceller, hata olursa eskiyi korur
 void	expand_tokens(t_token *head, t_shell *shell)
 {
 	char	*new_val;
 
 	while (head)
 	{
-		if (head->type == TOK_WORD)
+		if (head->type == TOK_WORD && head->value)
 		{
 			new_val = build_expanded(head->value, shell);
 			if (new_val)
