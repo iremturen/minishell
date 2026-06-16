@@ -28,6 +28,8 @@ int	env_set(t_shell *shell, char *key, char *val)
 	int		n;
 
 	tmp = ft_strjoin(key, "=");
+	if (!tmp)
+		return (0);
 	entry = ft_strjoin(tmp, val);
 	free(tmp);
 	if (!entry)
