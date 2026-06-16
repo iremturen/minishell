@@ -31,6 +31,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_shell	*shell;
 	char	*line;
+	int		exit_code;
 
 	(void)argc;
 	(void)argv;
@@ -54,6 +55,8 @@ int	main(int argc, char **argv, char **env)
 		g_signal = 0;
 		free(line);
 	}
+	exit_code = shell->last_exit;
+	clear_history();
 	free_shell(shell);
-	return (shell->last_exit);
+	return (exit_code);
 }
