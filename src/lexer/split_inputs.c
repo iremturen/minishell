@@ -1,44 +1,52 @@
 #include "../../minishell.h"
 
-//mesela "ls|grep a -> ls | grep a" gelirse her birini ayrı token a ayırıyor
-char	*add_spaces(char *line)
+// tek karakterlik veya cift karakterlik operatoru space ile sararak res e yazar
+static int	handle_op(char *line, char *res, int *j, int i)
+{
+	if (line[i] == '>' && line[i + 1] == '>')
+	{
+		res[(*j)++] = ' ';
+		res[(*j)++] = '>';
+		res[(*j)++] = '>';
+		res[(*j)++] = ' ';
+		return (2);
+	}
+	if (line[i] == '<' && line[i + 1] == '<')
+	{
+		res[(*j)++] = ' ';
+		res[(*j)++] = '<';
+		res[(*j)++] = '<';
+		res[(*j)++] = ' ';
+		return (2);
+	}
+	res[(*j)++] = ' ';
+	res[(*j)++] = line[i];
+	res[(*j)++] = ' ';
+	return (1);
+}
+
+// operatorlerin etrafina space ekler, quote icindeki operatorlere dokunmaz
+static char	*add_spaces(char *line)
 {
 	char	*res;
+	int		q;
 	int		i;
 	int		j;
 
-	i = 0;
-	j = 0;
-	if (!line)
-		return (NULL);
+	q = Q_NONE;
 	res = malloc(get_spaced_len(line));
 	if (!res)
 		return (NULL);
+	i = 0;
+	j = 0;
 	while (line[i])
 	{
-		if (line[i] == '>' && line[i + 1] == '>')
-		{
-			res[j++] = ' ';
-			res[j++] = '>';
-			res[j++] = '>';
-			res[j++] = ' ';
-			i += 2;
-		}
-		else if (line[i] == '<' && line[i + 1] == '<')
-		{
-			res[j++] = ' ';
-			res[j++] = '<';
-			res[j++] = '<';
-			res[j++] = ' ';
-			i += 2;
-		}
-		else if (is_operator(line[i]))
-		{
-			res[j++] = ' ';
-			res[j++] = line[i];
-			res[j++] = ' ';
-			i++;
-		}
+		if (line[i] == '\'' && q == Q_NONE) q = Q_SINGLE;
+		else if (line[i] == '\'' && q == Q_SINGLE) q = Q_NONE;
+		else if (line[i] == '"' && q == Q_NONE) q = Q_DOUBLE;
+		else if (line[i] == '"' && q == Q_DOUBLE) q = Q_NONE;
+		if (q == Q_NONE && is_operator(line[i]))
+			i += handle_op(line, res, &j, i);
 		else
 			res[j++] = line[i++];
 	}
@@ -46,6 +54,37 @@ char	*add_spaces(char *line)
 	return (res);
 }
 
+// quote a duyarli split: quote icindeki space leri token sinirlari saymaz
+static char	**split_q(char *s)
+{
+	char	**arr;
+	int		n;
+	int		i;
+	int		w;
+
+	n = count_words_q(s);
+	arr = ft_calloc(n + 1, sizeof(char *));
+	if (!arr)
+		return (NULL);
+	i = 0;
+	w = 0;
+	while (s[i] && w < n)
+	{
+		while (s[i] == ' ')
+			i++;
+		arr[w] = ft_substr(s, i, word_end_q(s, i) - i);
+		if (!arr[w])
+		{
+			free_array(arr);
+			return (NULL);
+		}
+		i = word_end_q(s, i);
+		w++;
+	}
+	return (arr);
+}
+
+// satiri operator bolumlere ayiriyor, quote duyarli split kullanir
 char	**split_inputs(char *line)
 {
 	char	*tmp;
@@ -54,7 +93,7 @@ char	**split_inputs(char *line)
 	tmp = add_spaces(line);
 	if (!tmp)
 		return (NULL);
-	args = ft_split(tmp, ' ');
+	args = split_q(tmp);
 	free(tmp);
 	return (args);
 }
