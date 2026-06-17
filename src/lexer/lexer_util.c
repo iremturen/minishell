@@ -56,3 +56,47 @@ int	has_unclosed_quotes(char *line)
 	}
 	return (q != Q_NONE);
 }
+
+// kelime sonunu bulur: quote icindeki space lari atlar
+int	word_end_q(char *s, int i)
+{
+	int	q;
+
+	q = Q_NONE;
+	while (s[i])
+	{
+		if (s[i] == '\'' && q == Q_NONE)
+			q = Q_SINGLE;
+		else if (s[i] == '\'' && q == Q_SINGLE)
+			q = Q_NONE;
+		else if (s[i] == '"' && q == Q_NONE)
+			q = Q_DOUBLE;
+		else if (s[i] == '"' && q == Q_DOUBLE)
+			q = Q_NONE;
+		else if (s[i] == ' ' && q == Q_NONE)
+			break ;
+		i++;
+	}
+	return (i);
+}
+
+// quote a gore kelime sayar
+int	count_words_q(char *s)
+{
+	int	i;
+	int	n;
+
+	i = 0;
+	n = 0;
+	while (s[i])
+	{
+		while (s[i] == ' ')
+			i++;
+		if (s[i])
+		{
+			n++;
+			i = word_end_q(s, i);
+		}
+	}
+	return (n);
+}

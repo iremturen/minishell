@@ -80,11 +80,12 @@ t_token		*tokenize(char *line, t_shell *shell);
 void		free_tokens(t_token *head);
 int			is_operator(char c);
 size_t		get_spaced_len(char *line);
-char		*add_spaces(char *line);
 char		**split_inputs(char *line);
 int			validate_lexer_syntax(char **args);
 int			print_syntax_error(const char *token);
 int			has_unclosed_quotes(char *line);
+int			word_end_q(char *s, int i);
+int			count_words_q(char *s);
 void		free_array(char **arr);
 
 // parser
@@ -95,6 +96,7 @@ int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file);
 
 // expander
 void		expand_tokens(t_token *head, t_shell *shell);
+char		*build_expanded(char *str, t_shell *shell);
 void		handle_quotes(t_token *head);
 
 // executor
@@ -102,7 +104,7 @@ void		execute_cmd(t_cmd *cmd, t_shell *shell);
 void		execute_builtin(t_cmd *cmd, t_shell *shell);
 void		execute_single(t_cmd *cmd, t_shell *shell);
 void		execute_pipeline(t_cmd *cmds, t_shell *shell);
-int			apply_redirs(t_redir *redir);
+int			apply_redirs(t_redir *redir, t_shell *shell);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
