@@ -34,7 +34,7 @@ static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 		dup2(out_fd, STDOUT_FILENO);
 		close(out_fd);
 	}
-	if (!apply_redirs(cmd->redirs))
+	if (!apply_redirs(cmd->redirs, shell))
 		exit(1);
 	if (is_builtin(cmd->argv[0]))
 		exec_builtin_child(cmd, shell);

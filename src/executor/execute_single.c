@@ -57,7 +57,7 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 	if (pid == 0)
 	{
 		setup_signals_child();
-		if (!apply_redirs(cmd->redirs))
+		if (!apply_redirs(cmd->redirs, shell))
 			exit(1);
 		execve(cmd->cmd_path, cmd->argv, shell->envp);
 		if (errno == EACCES)

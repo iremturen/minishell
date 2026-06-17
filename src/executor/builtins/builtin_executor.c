@@ -1,13 +1,13 @@
 #include "../../../minishell.h"
 
 // stdin ve stdout un kopyasini aliyor, redir uyguluyor
-static int	save_and_redir(t_cmd *cmd, int *sin, int *sout)
+static int	save_and_redir(t_cmd *cmd, int *sin, int *sout, t_shell *shell)
 {
 	*sin = dup(STDIN_FILENO);
 	*sout = dup(STDOUT_FILENO);
 	if (*sin == -1 || *sout == -1)
 		return (0);
-	if (cmd->redirs && !apply_redirs(cmd->redirs))
+	if (cmd->redirs && !apply_redirs(cmd->redirs, shell))
 	{
 		dup2(*sin, STDIN_FILENO);
 		dup2(*sout, STDOUT_FILENO);
@@ -33,7 +33,7 @@ void	execute_builtin(t_cmd *cmd, t_shell *shell)
 	int	sin;
 	int	sout;
 
-	if (!save_and_redir(cmd, &sin, &sout))
+	if (!save_and_redir(cmd, &sin, &sout, shell))
 		return ;
 	if (!ft_strncmp(cmd->argv[0], "echo", 5))
 		builtin_echo(cmd->argv);

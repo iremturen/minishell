@@ -64,7 +64,7 @@ static int	expand_dollar(char **res, char *str, int *i, t_shell *shell)
 }
 
 // token degerini karakter karakter tarayip $ genisletmesi yaparak yeni string uretir
-static char	*build_expanded(char *str, t_shell *shell)
+char	*build_expanded(char *str, t_shell *shell)
 {
 	char	*res;
 	char	buf[2];
