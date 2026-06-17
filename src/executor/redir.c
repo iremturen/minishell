@@ -7,34 +7,28 @@ static void	heredoc_sigint(int sig)
 	write(1, "\n", 1);
 }
 
-// yonlendirme tipine gore dosyayi uygun modda aciyor
-static int	open_redir(t_redir *r)
-{
-	if (r->type == TOK_REDIR_IN)
-		return (open(r->file, O_RDONLY));
-	if (r->type == TOK_REDIR_OUT)
-		return (open(r->file, O_WRONLY | O_CREAT | O_TRUNC, 0644));
-	if (r->type == TOK_APPEND)
-		return (open(r->file, O_WRONLY | O_CREAT | O_APPEND, 0644));
-	return (-1);
-}
-
-// dosyayi acip stdin veya stdout a yonlendiriyor
+// redir tipine gore dosyayi acip dup2 ile yonlendiriyor
 static int	apply_single_redir(t_redir *r)
 {
 	int	fd;
 	int	target;
 
-	fd = open_redir(r);
+	if (r->type == TOK_REDIR_IN)
+		fd = open(r->file, O_RDONLY);
+	else if (r->type == TOK_REDIR_OUT)
+		fd = open(r->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (r->type == TOK_APPEND)
+		fd = open(r->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else
+		fd = -1;
 	if (fd == -1)
 	{
 		perror(r->file);
 		return (0);
 	}
+	target = STDOUT_FILENO;
 	if (r->type == TOK_REDIR_IN)
 		target = STDIN_FILENO;
-	else
-		target = STDOUT_FILENO;
 	if (dup2(fd, target) == -1)
 	{
 		close(fd);
@@ -44,8 +38,24 @@ static int	apply_single_redir(t_redir *r)
 	return (1);
 }
 
-// heredoc: delimiter gelene kadar satir satir okuyor, ctrl+c yi destekliyor
-static int	heredoc_read(char *delim)
+// heredoc satiri: $ degiskenlerini genisletip pipe e yazıyor
+static void	write_expanded_line(int fd, char *line, t_shell *shell)
+{
+	char	*exp;
+
+	exp = build_expanded(line, shell);
+	if (exp)
+	{
+		write(fd, exp, ft_strlen(exp));
+		free(exp);
+	}
+	else
+		write(fd, line, ft_strlen(line));
+	write(fd, "\n", 1);
+}
+
+// heredoc: delimiter gelene kadar satir satir okuyor, ctrl+c ve expansion destekli
+static int	heredoc_read(char *delim, t_shell *shell)
 {
 	int		pipefd[2];
 	char	*line;
@@ -63,8 +73,7 @@ static int	heredoc_read(char *delim)
 			free(line);
 			break ;
 		}
-		write(pipefd[1], line, ft_strlen(line));
-		write(pipefd[1], "\n", 1);
+		write_expanded_line(pipefd[1], line, shell);
 		free(line);
 	}
 	close(pipefd[1]);
@@ -75,7 +84,7 @@ static int	heredoc_read(char *delim)
 }
 
 // redir listesini siraya gore uygular, basarisizlikta 0 doner
-int	apply_redirs(t_redir *redir)
+int	apply_redirs(t_redir *redir, t_shell *shell)
 {
 	int	fd;
 
@@ -83,7 +92,7 @@ int	apply_redirs(t_redir *redir)
 	{
 		if (redir->type == TOK_HEREDOC)
 		{
-			fd = heredoc_read(redir->file);
+			fd = heredoc_read(redir->file, shell);
 			setup_signals_interactive();
 			if (fd == -1)
 				return (0);
