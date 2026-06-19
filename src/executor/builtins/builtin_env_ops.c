@@ -84,52 +84,31 @@ void	builtin_cd(t_cmd *cmd, t_shell *shell)
 		env_set(shell, "PWD", cwd);
 }
 
-// unset: envp den ilgili degiskeni siliyor
+// unset: argv listesindeki tum degiskenleri envp den siliyor
 void	builtin_unset(t_cmd *cmd, t_shell *shell)
 {
 	int	idx;
 	int	n;
+	int	i;
 
-	if (!cmd->argv[1])
-		return ;
-	idx = env_find(shell->envp, cmd->argv[1]);
-	if (idx == -1)
-		return ;
-	free(shell->envp[idx]);
-	n = idx;
-	while (shell->envp[n + 1])
+	i = 1;
+	while (cmd->argv[i])
 	{
-		shell->envp[n] = shell->envp[n + 1];
-		n++;
-	}
-	shell->envp[n] = NULL;
-}
-
-// export: argumansiz tum envp yi yazar, KEY=VAL ile envp ye ekler
-void	builtin_export(t_cmd *cmd, t_shell *shell)
-{
-	char	*eq;
-	char	*key;
-	int		i;
-
-	if (!cmd->argv[1])
-	{
-		i = 0;
-		while (shell->envp[i])
+		idx = env_find(shell->envp, cmd->argv[i]);
+		if (idx != -1)
 		{
-			write(1, "declare -x ", 11);
-			write(1, shell->envp[i], ft_strlen(shell->envp[i]));
-			write(1, "\n", 1);
-			i++;
+			free(shell->envp[idx]);
+			n = idx;
+			while (shell->envp[n + 1])
+			{
+				shell->envp[n] = shell->envp[n + 1];
+				n++;
+			}
+			shell->envp[n] = NULL;
 		}
-		return ;
+		i++;
 	}
-	eq = ft_strchr(cmd->argv[1], '=');
-	if (!eq)
-		return ;
-	key = ft_substr(cmd->argv[1], 0, eq - cmd->argv[1]);
-	if (!key)
-		return ;
-	env_set(shell, key, eq + 1);
-	free(key);
 }
+
+
+
