@@ -52,14 +52,6 @@ void	builtin_env(char **envp)
 	}
 }
 
-// exit: verilen argumani exit kodu olarak kullaniyor
-void	builtin_exit(t_cmd *cmd, t_shell *shell)
-{
-	write(1, "exit\n", 5);
-	if (!cmd->argv[1])
-		exit(shell->last_exit);
-	exit(ft_atoi(cmd->argv[1]));
-}
 
 // is_builtin: komut adinin builtin olup olmadigini kontrol ediyor
 int	is_builtin(char *cmd)

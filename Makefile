@@ -40,7 +40,10 @@ EXECUTOR_SRCS	= \
 	src/executor/redir.c \
 	src/executor/builtins/builtin_executor.c \
 	src/executor/builtins/builtin_utils.c \
-	src/executor/builtins/builtin_env_ops.c
+	src/executor/builtins/builtin_env_ops.c \
+	src/executor/builtins/builtin_exit.c \
+	src/executor/builtins/builtin_export.c
+
 
 # ── Tümü ─────────────────────────────────────────────────
 SRCS	= \
