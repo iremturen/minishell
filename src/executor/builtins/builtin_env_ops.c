@@ -57,30 +57,56 @@ int	env_set(t_shell *shell, char *key, char *val)
 	return (1);
 }
 
-// cd: argumansiz HOME a gider, basarida PWD yi gunceller
-void	builtin_cd(t_cmd *cmd, t_shell *shell)
+// cd hedef dizini hesapliyor: no-arg HOME, "-" OLDPWD, digeri argv[1]
+static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
-	char	*path;
-	char	cwd[1024];
-	int		idx;
+	int	idx;
 
 	if (!cmd->argv[1])
 	{
 		idx = env_find(shell->envp, "HOME");
 		if (idx == -1)
 		{
-			write(2, "cd: HOME not set\n", 17);
-			return ;
+			write(2, "minishell: cd: HOME not set\n", 28);
+			return (NULL);
 		}
-		path = ft_strchr(shell->envp[idx], '=') + 1;
+		return (ft_strchr(shell->envp[idx], '=') + 1);
 	}
-	else
-		path = cmd->argv[1];
-	if (getcwd(cwd, sizeof(cwd)))
-		env_set(shell, "OLDPWD", cwd);
+	if (ft_strncmp(cmd->argv[1], "-", 2) == 0)
+	{
+		idx = env_find(shell->envp, "OLDPWD");
+		if (idx == -1)
+		{
+			write(2, "minishell: cd: OLDPWD not set\n", 30);
+			return (NULL);
+		}
+		return (ft_strchr(shell->envp[idx], '=') + 1);
+	}
+	return (cmd->argv[1]);
+}
+
+// cd: argumansiz HOME a, "-" ile OLDPWD e, verilen yola gider
+void	builtin_cd(t_cmd *cmd, t_shell *shell)
+{
+	char	*path;
+	char	cwd[1024];
+	char	old[1024];
+
+	path = get_cd_path(cmd, shell);
+	if (!path)
+		return ;
+	if (!getcwd(old, sizeof(old)))
+	{
+		perror("cd: getcwd");
+		return ;
+	}
 	if (chdir(path) == -1)
+	{
 		perror("cd");
-	else if (getcwd(cwd, sizeof(cwd)))
+		return ;
+	}
+	env_set(shell, "OLDPWD", old);
+	if (getcwd(cwd, sizeof(cwd)))
 		env_set(shell, "PWD", cwd);
 }
 
