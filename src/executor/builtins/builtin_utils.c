@@ -1,6 +1,6 @@
 #include "../../../minishell.h"
 
-// echo: -n bayragini destekliyor, argumansiz satir sonunu yazıyor
+// echo: ardisik -n bayraklarini atlar, kalan argumanlari yazar
 void	builtin_echo(char **argv)
 {
 	int	i;
@@ -8,10 +8,10 @@ void	builtin_echo(char **argv)
 
 	i = 1;
 	newline = 1;
-	if (argv[1] && ft_strncmp(argv[1], "-n", 3) == 0)
+	while (argv[i] && ft_strncmp(argv[i], "-n", 3) == 0)
 	{
 		newline = 0;
-		i = 2;
+		i++;
 	}
 	while (argv[i])
 	{
