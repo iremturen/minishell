@@ -6,7 +6,13 @@ static int	save_and_redir(t_cmd *cmd, int *sin, int *sout, t_shell *shell)
 	*sin = dup(STDIN_FILENO);
 	*sout = dup(STDOUT_FILENO);
 	if (*sin == -1 || *sout == -1)
+	{
+		if (*sin != -1)
+			close(*sin);
+		if (*sout != -1)
+			close(*sout);
 		return (0);
+	}
 	if (cmd->redirs && !apply_redirs(cmd->redirs, shell))
 	{
 		dup2(*sin, STDIN_FILENO);
@@ -34,7 +40,11 @@ void	execute_builtin(t_cmd *cmd, t_shell *shell)
 	int	sout;
 
 	if (!save_and_redir(cmd, &sin, &sout, shell))
+	{
+		shell->last_exit = 1;
 		return ;
+	}
+	shell->last_exit = 0;
 	if (!ft_strncmp(cmd->argv[0], "echo", 5))
 		builtin_echo(cmd->argv);
 	else if (!ft_strncmp(cmd->argv[0], "pwd", 4))

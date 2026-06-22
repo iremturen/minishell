@@ -3,6 +3,7 @@
 // builtin i forked child sureci icinde direkt calistiriyor
 static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 {
+	shell->last_exit = 0;
 	if (!ft_strncmp(cmd->argv[0], "echo", 5))
 		builtin_echo(cmd->argv);
 	else if (!ft_strncmp(cmd->argv[0], "pwd", 4))
