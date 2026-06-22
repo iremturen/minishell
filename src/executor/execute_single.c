@@ -26,7 +26,7 @@ static void	update_exit_status(int status, t_shell *shell)
 	{
 		shell->last_exit = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGQUIT)
-			write(2, "Quit: 3\n", 8);
+			write(2, "Quit (core dumped)\n", 19);
 		else if (WTERMSIG(status) == SIGINT)
 			write(1, "\n", 1);
 	}
@@ -59,10 +59,7 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 		setup_signals_child();
 		if (!apply_redirs(cmd->redirs, shell))
 			exit(1);
-		execve(cmd->cmd_path, cmd->argv, shell->envp);
-		if (errno == EACCES)
-			exit(126);
-		exit(1);
+		exec_or_exit(cmd, shell->envp);
 	}
 	waitpid(pid, &status, 0);
 	free(cmd->cmd_path);

@@ -62,3 +62,22 @@ char	*resolve_path(char *cmd, char **envp)
 	free_array(paths);
 	return (result);
 }
+
+// execve cagirir, basarisizsa hata yazar ve dogru kod ile cikiyor
+void	exec_or_exit(t_cmd *cmd, char **envp)
+{
+	execve(cmd->cmd_path, cmd->argv, envp);
+	write(2, "minishell: ", 11);
+	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
+	if (errno == EISDIR)
+	{
+		write(2, ": Is a directory\n", 17);
+		exit(126);
+	}
+	if (errno == EACCES)
+	{
+		write(2, ": Permission denied\n", 20);
+		exit(126);
+	}
+	exit(1);
+}

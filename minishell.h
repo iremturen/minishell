@@ -108,6 +108,7 @@ int			apply_redirs(t_redir *redir, t_shell *shell);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
+void		exec_or_exit(t_cmd *cmd, char **envp);
 
 // builtins
 int			is_builtin(char *cmd);

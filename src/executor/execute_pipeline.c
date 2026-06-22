@@ -46,10 +46,7 @@ static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 		write(2, ": command not found\n", 20);
 		exit(127);
 	}
-	execve(cmd->cmd_path, cmd->argv, shell->envp);
-	if (errno == EACCES)
-		exit(126);
-	exit(1);
+	exec_or_exit(cmd, shell->envp);
 }
 
 // fork yapar, parent ta gereksiz write ucunu kapatir
@@ -91,7 +88,9 @@ static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
 	else if (WIFSIGNALED(status))
 	{
 		shell->last_exit = 128 + WTERMSIG(status);
-		if (WTERMSIG(status) == SIGINT)
+		if (WTERMSIG(status) == SIGQUIT)
+			write(2, "Quit (core dumped)\n", 19);
+		else if (WTERMSIG(status) == SIGINT)
 			write(1, "\n", 1);
 	}
 }
