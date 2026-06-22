@@ -94,15 +94,20 @@ void	builtin_cd(t_cmd *cmd, t_shell *shell)
 
 	path = get_cd_path(cmd, shell);
 	if (!path)
+	{
+		shell->last_exit = 1;
 		return ;
+	}
 	if (!getcwd(old, sizeof(old)))
 	{
 		perror("cd: getcwd");
+		shell->last_exit = 1;
 		return ;
 	}
 	if (chdir(path) == -1)
 	{
 		perror("cd");
+		shell->last_exit = 1;
 		return ;
 	}
 	env_set(shell, "OLDPWD", old);
