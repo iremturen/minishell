@@ -1,7 +1,7 @@
 #include "../../minishell.h"
 
 // tek global: son sinyali tutuyor (subject: max 1 global)
-int	g_signal = 0;
+volatile sig_atomic_t	g_signal = 0;
 
 // ctrl+c: input bufferini temizler, yeni satir basip promptu tazeler
 static void	sigint_handler(int sig)

@@ -17,8 +17,8 @@
 extern void	rl_replace_line(const char *text, int clear_undo);
 # endif
 
-// sinyal: max 1 global degisken
-extern int	g_signal;
+// sinyal: max 1 global degisken (volatile sig_atomic_t: signal-safe)
+extern volatile sig_atomic_t	g_signal;
 
 // token tipleri: kelime, pipe, yonlendirme operatorleri
 typedef enum e_token_type
