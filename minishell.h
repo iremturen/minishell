@@ -12,6 +12,11 @@
 # include <readline/history.h>
 # include "Libft/libft.h"
 
+// Linux GNU readline rl_replace_line i expose eder; macOS editline etmez
+# ifdef __linux__
+extern void	rl_replace_line(const char *text, int clear_undo);
+# endif
+
 // sinyal: max 1 global degisken
 extern int	g_signal;
 

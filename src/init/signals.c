@@ -3,11 +3,14 @@
 // tek global: son sinyali tutuyor (subject: max 1 global)
 int	g_signal = 0;
 
-// ctrl+c: yeni satir basip prompt u tazeler
+// ctrl+c: input bufferini temizler, yeni satir basip promptu tazeler
 static void	sigint_handler(int sig)
 {
 	g_signal = sig;
 	write(1, "\n", 1);
+# ifdef __linux__
+	rl_replace_line("", 0);
+# endif
 	rl_on_new_line();
 	rl_redisplay();
 }
