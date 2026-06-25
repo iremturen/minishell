@@ -15,7 +15,7 @@ static void	sigint_handler(int sig)
 	rl_redisplay();
 }
 
-// interaktif mod: ctrl+c yakala, ctrl+\ yoksay
+// interaktif mod: ctrl+c yakala, ctrl+\ ve sigpipe yoksay
 void	setup_signals_interactive(void)
 {
 	struct sigaction	sa;
@@ -25,6 +25,7 @@ void	setup_signals_interactive(void)
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGINT, &sa, NULL);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);
 }
 
 // child sureci: her iki sinyal icin varsayilan davranisi geri yukle
