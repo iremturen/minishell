@@ -138,7 +138,7 @@ t_cmd	*parse(t_token *tokens)
 			return (free_cmds(head), NULL);
 		tok = tok->next;
 	}
-	if (!head->argv)
+	if (!head->argv && !head->redirs)
 		return (free_cmds(head), NULL);
 	return (head);
 }
