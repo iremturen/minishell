@@ -26,6 +26,32 @@ static void	run_line(char *line, t_shell *shell)
 	free_tokens(tokens);
 }
 
+// readline NULL dondu: ctrl+c ise devam et (1), ctrl+d ise cik (0)
+static int	handle_null_line(void)
+{
+	if (g_signal == SIGINT)
+	{
+		g_signal = 0;
+		return (1);
+	}
+	write(1, "exit\n", 5);
+	return (0);
+}
+
+// satiri isle: ctrl+c sonrasi $? = 130, sonra calistir ve bellek temizle
+static void	handle_line(char *line, t_shell *shell)
+{
+	if (g_signal == SIGINT)
+		shell->last_exit = 130;
+	g_signal = 0;
+	if (*line)
+	{
+		add_history(line);
+		run_line(line, shell);
+	}
+	free(line);
+}
+
 // ana dongu: readline ile satir aliyor, isleme sokuyor
 int	main(int argc, char **argv, char **env)
 {
@@ -44,16 +70,11 @@ int	main(int argc, char **argv, char **env)
 		line = readline("minishell$ ");
 		if (!line)
 		{
-			write(1, "exit\n", 5);
+			if (handle_null_line())
+				continue ;
 			break ;
 		}
-		if (*line)
-		{
-			add_history(line);
-			run_line(line, shell);
-		}
-		g_signal = 0;
-		free(line);
+		handle_line(line, shell);
 	}
 	exit_code = shell->last_exit;
 	clear_history();
