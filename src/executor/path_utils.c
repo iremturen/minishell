@@ -31,8 +31,12 @@ char	*find_command(char **paths, char *cmd)
 	while (paths[i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
+		if (!tmp)
+			return (NULL);
 		full = ft_strjoin(tmp, cmd);
 		free(tmp);
+		if (!full)
+			return (NULL);
 		if (access(full, X_OK) == 0)
 			return (full);
 		free(full);
