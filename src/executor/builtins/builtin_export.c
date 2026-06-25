@@ -19,6 +19,25 @@ static void	print_export_entry(char *entry)
 	write(1, "\"\n", 2);
 }
 
+// export icin key gecerli degisken ismi mi: harf/_ile baslamali, harf/rakam/_ olmali
+static int	is_valid_key(char *key)
+{
+	int	i;
+
+	if (!key || !key[0])
+		return (0);
+	if (!ft_isalpha((unsigned char)key[0]) && key[0] != '_')
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!ft_isalnum((unsigned char)key[i]) && key[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 // tek bir KEY=VAL argumani isliyor, env e ekliyor
 static void	do_export_one(char *arg, t_shell *shell)
 {
@@ -31,6 +50,14 @@ static void	do_export_one(char *arg, t_shell *shell)
 	key = ft_substr(arg, 0, eq - arg);
 	if (!key)
 		return ;
+	if (!is_valid_key(key))
+	{
+		write(2, "minishell: export: '", 20);
+		write(2, key, ft_strlen(key));
+		write(2, "': not a valid identifier\n", 26);
+		free(key);
+		return ;
+	}
 	env_set(shell, key, eq + 1);
 	free(key);
 }
