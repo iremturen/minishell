@@ -62,6 +62,7 @@ static int	heredoc_read(char *delim, t_shell *shell)
 	size_t	dlen;
 
 	signal(SIGINT, heredoc_sigint);
+	signal(SIGQUIT, SIG_IGN);
 	if (pipe(pipefd) == -1)
 		return (-1);
 	dlen = ft_strlen(delim);
