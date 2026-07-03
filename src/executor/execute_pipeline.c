@@ -51,7 +51,7 @@ static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 }
 
 // fork yapar, parent ta gereksiz write ucunu kapatir
-static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
+static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, int close_fd, t_shell *shell)
 {
 	pid_t	pid;
 
@@ -64,7 +64,11 @@ static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
 		return (-1);
 	}
 	if (pid == 0)
+	{
+		if (close_fd != -1)
+			close(close_fd);
 		exec_child(cmd, in_fd, out_fd, shell);
+	}
 	if (out_fd != -1)
 		close(out_fd);
 	return (pid);
@@ -112,7 +116,7 @@ void	execute_pipeline(t_cmd *cmds, t_shell *shell)
 	{
 		if (cur->next && pipe(pipefd) == -1)
 			break ;
-		pids[n] = fork_cmd(cur, prev_fd, cur->next ? pipefd[1] : -1, shell);
+		pids[n] = fork_cmd(cur, prev_fd, cur->next ? pipefd[1] : -1, cur->next ? pipefd[0] : -1, shell);
 		if (prev_fd != -1)
 			close(prev_fd);
 		prev_fd = cur->next ? pipefd[0] : -1;

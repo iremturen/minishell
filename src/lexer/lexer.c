@@ -15,6 +15,10 @@ static t_token	*new_token(char *value)
 		return (NULL);
 	}
 	tok->next = NULL;
+	if (ft_strchr(value, '\'') != NULL || ft_strchr(value, '"') != NULL)
+		tok->is_quoted = 1;
+	else
+		tok->is_quoted = 0;
 	if (!ft_strncmp(value, ">>", 3))
 		tok->type = TOK_APPEND;
 	else if (!ft_strncmp(value, "<<", 3))

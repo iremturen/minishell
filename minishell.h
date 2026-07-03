@@ -8,6 +8,8 @@
 # include <errno.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
+# include <string.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "Libft/libft.h"
@@ -44,6 +46,7 @@ typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	int				is_quoted;
 	struct s_token	*next;
 }	t_token;
 
@@ -102,6 +105,7 @@ int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file);
 // expander
 void		expand_tokens(t_token *head, t_shell *shell);
 char		*build_expanded(char *str, t_shell *shell);
+void		filter_empty_tokens(t_token **head);
 void		handle_quotes(t_token *head);
 
 // executor

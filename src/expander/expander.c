@@ -115,3 +115,33 @@ void	expand_tokens(t_token *head, t_shell *shell)
 		head = head->next;
 	}
 }
+
+// filtreleme: tırnaksız olup expansion sonrası boş string kalan tokenleri temizler
+void	filter_empty_tokens(t_token **head)
+{
+	t_token	*cur;
+	t_token	*prev;
+	t_token	*temp;
+
+	cur = *head;
+	prev = NULL;
+	while (cur)
+	{
+		if (cur->type == TOK_WORD && ft_strlen(cur->value) == 0 && !cur->is_quoted)
+		{
+			temp = cur->next;
+			if (prev)
+				prev->next = temp;
+			else
+				*head = temp;
+			free(cur->value);
+			free(cur);
+			cur = temp;
+		}
+		else
+		{
+			prev = cur;
+			cur = cur->next;
+		}
+	}
+}

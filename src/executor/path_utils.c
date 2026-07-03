@@ -51,14 +51,10 @@ char	*resolve_path(char *cmd, char **envp)
 	char	**paths;
 	char	*result;
 
-	if (!cmd)
+	if (!cmd || ft_strlen(cmd) == 0)
 		return (NULL);
 	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, X_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
+		return (ft_strdup(cmd));
 	paths = find_path(envp);
 	if (!paths)
 		return (NULL);
@@ -70,18 +66,28 @@ char	*resolve_path(char *cmd, char **envp)
 // execve cagirir, basarisizsa hata yazar ve dogru kod ile cikiyor
 void	exec_or_exit(t_cmd *cmd, char **envp)
 {
+	struct stat	path_stat;
+
 	execve(cmd->cmd_path, cmd->argv, envp);
 	write(2, "minishell: ", 11);
 	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	if (errno == EISDIR)
+	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
 	{
-		write(2, ": Is a directory\n", 17);
+		write(2, ": is a directory\n", 17);
 		exit(126);
+	}
+	if (errno == ENOENT)
+	{
+		write(2, ": No such file or directory\n", 28);
+		exit(127);
 	}
 	if (errno == EACCES)
 	{
 		write(2, ": Permission denied\n", 20);
 		exit(126);
 	}
-	exit(1);
+	write(2, ": ", 2);
+	write(2, strerror(errno), ft_strlen(strerror(errno)));
+	write(2, "\n", 1);
+	exit(126);
 }

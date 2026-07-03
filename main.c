@@ -28,6 +28,7 @@ static void	run_line(char *line, t_shell *shell)
 	if (!tokens)
 		return ;
 	expand_tokens(tokens, shell);
+	filter_empty_tokens(&tokens);
 	handle_quotes(tokens);
 	cmds = parse(tokens);
 	if (cmds)
