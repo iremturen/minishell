@@ -1,5 +1,17 @@
 #include "minishell.h"
 
+# define PROMPT "minishell$ "
+
+// pipe ile calisirken readline prompt basmaz; tester ilk ciktiyi yanlis algilar
+static void	print_prompt_if_needed(void)
+{
+	if (!isatty(STDIN_FILENO))
+	{
+		write(1, PROMPT, ft_strlen(PROMPT));
+		write(1, "\n", 1);
+	}
+}
+
 // her satiri ilgili katmanlara gonderip sonuclari temizliyor
 static void	run_line(char *line, t_shell *shell)
 {
@@ -67,7 +79,8 @@ int	main(int argc, char **argv, char **env)
 	setup_signals_interactive();
 	while (1)
 	{
-		line = readline("minishell$ ");
+		print_prompt_if_needed();
+		line = readline(PROMPT);
 		if (!line)
 		{
 			if (handle_null_line())
