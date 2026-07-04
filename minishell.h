@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -14,13 +25,7 @@
 # include <readline/history.h>
 # include "Libft/libft.h"
 
-// Linux GNU readline rl_replace_line i expose eder; macOS editline etmez
-# ifdef __linux__
-extern void	rl_replace_line(const char *text, int clear_undo);
-# endif
-
-// sinyal: max 1 global degisken (volatile sig_atomic_t: signal-safe)
-extern volatile sig_atomic_t	g_signal;
+# define PROMPT "minishell$ "
 
 // token tipleri: kelime, pipe, yonlendirme operatorleri
 typedef enum e_token_type
@@ -77,11 +82,33 @@ typedef struct s_shell
 	int		last_exit;
 }	t_shell;
 
+typedef struct s_fork_data
+{
+	int		in_fd;
+	int		out_fd;
+	int		close_fd;
+	t_shell	*shell;
+}	t_fork_data;
+
+typedef struct s_pipe_ctx
+{
+	int		prev_fd;
+	int		pipefd[2];
+	pid_t	pids[256];
+	int		n;
+	t_shell	*shell;
+}	t_pipe_ctx;
+
 // init
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
+void		print_prompt_if_needed(void);
 void		setup_signals_interactive(void);
 void		setup_signals_child(void);
+void		reset_readline_line(void);
+int			get_signal(void);
+void		set_signal(int sig);
+void		clear_signal(void);
 
 // lexer
 t_token		*tokenize(char *line, t_shell *shell);
@@ -98,6 +125,7 @@ void		free_array(char **arr);
 
 // parser
 t_cmd		*parse(t_token *tokens);
+t_cmd		*new_cmd(void);
 void		free_cmds(t_cmd *head);
 t_redir		*new_redir(t_token_type type, char *file);
 int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file);
@@ -107,13 +135,18 @@ void		expand_tokens(t_token *head, t_shell *shell);
 char		*build_expanded(char *str, t_shell *shell);
 void		filter_empty_tokens(t_token **head);
 void		handle_quotes(t_token *head);
+char		*get_env_val(char *name, char **envp);
+int			str_append(char **dest, char *src);
+int			append_char(char **res, char c);
 
 // executor
 void		execute_cmd(t_cmd *cmd, t_shell *shell);
 void		execute_builtin(t_cmd *cmd, t_shell *shell);
 void		execute_single(t_cmd *cmd, t_shell *shell);
 void		execute_pipeline(t_cmd *cmds, t_shell *shell);
+pid_t		pipeline_fork(t_cmd *cmd, t_fork_data *data);
 int			apply_redirs(t_redir *redir, t_shell *shell);
+int			process_heredoc(char *delim, t_shell *shell);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
@@ -129,5 +162,8 @@ void		builtin_cd(t_cmd *cmd, t_shell *shell);
 void		builtin_unset(t_cmd *cmd, t_shell *shell);
 void		builtin_export(t_cmd *cmd, t_shell *shell);
 int			env_set(t_shell *shell, char *key, char *val);
+int			env_find(char **envp, char *key);
+char		*create_env_entry(char *key, char *val);
+int			add_new_env(t_shell *shell, char *entry);
 
 #endif

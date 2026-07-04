@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   error_handling.c                                   :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 static int	token_is(const char *token, const char *expected)
@@ -41,16 +52,17 @@ int	validate_lexer_syntax(char **args)
 
 	if (!args || !args[0])
 		return (0);
-	if (is_pipe_token(args[0])) //pipe ile başlıyorsa hata
+	if (is_pipe_token(args[0]))
 		return (print_syntax_error(args[0]));
 	i = 0;
 	while (args[i])
 	{
-		if (is_pipe_token(args[i]) && (!args[i + 1] || is_pipe_token(args[i + 1])))
-			return (print_syntax_error(args[i])); // || veya | sorasıdan token yok ise hata
+		if (is_pipe_token(args[i])
+			&& (!args[i + 1] || is_pipe_token(args[i + 1])))
+			return (print_syntax_error(args[i]));
 		if (is_redir_token(args[i])
 			&& (!args[i + 1] || is_pipe_token(args[i + 1])
-				|| is_redir_token(args[i + 1]))) // |> ise hata 
+				|| is_redir_token(args[i + 1])))
 			return (print_syntax_error(args[i + 1]));
 		i++;
 	}

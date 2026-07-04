@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // redir-only komut: > file gibi. child fork edip rediri uygulayip cikiyor

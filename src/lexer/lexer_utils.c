@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   lexer_utils.c                                      :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // char** dizisini eleman eleman serbest birakiyor
@@ -11,4 +22,17 @@ void	free_array(char **arr)
 	while (arr[i])
 		free(arr[i++]);
 	free(arr);
+}
+
+void	free_tokens(t_token *head)
+{
+	t_token	*next;
+
+	while (head)
+	{
+		next = head->next;
+		free(head->value);
+		free(head);
+		head = next;
+	}
 }

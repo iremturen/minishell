@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   split_inputs.c                                     :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // tek karakterlik veya cift karakterlik operatoru space ile sararak res e yazar
@@ -25,6 +36,19 @@ static int	handle_op(char *line, char *res, int *j, int i)
 	return (1);
 }
 
+static int	update_quote(char c, int q)
+{
+	if (c == '\'' && q == Q_NONE)
+		return (Q_SINGLE);
+	if (c == '\'' && q == Q_SINGLE)
+		return (Q_NONE);
+	if (c == '"' && q == Q_NONE)
+		return (Q_DOUBLE);
+	if (c == '"' && q == Q_DOUBLE)
+		return (Q_NONE);
+	return (q);
+}
+
 // operatorlerin etrafina space ekler, quote icindeki operatorlere dokunmaz
 static char	*add_spaces(char *line)
 {
@@ -41,10 +65,7 @@ static char	*add_spaces(char *line)
 	j = 0;
 	while (line[i])
 	{
-		if (line[i] == '\'' && q == Q_NONE) q = Q_SINGLE;
-		else if (line[i] == '\'' && q == Q_SINGLE) q = Q_NONE;
-		else if (line[i] == '"' && q == Q_NONE) q = Q_DOUBLE;
-		else if (line[i] == '"' && q == Q_DOUBLE) q = Q_NONE;
+		q = update_quote(line[i], q);
 		if (q == Q_NONE && is_operator(line[i]))
 			i += handle_op(line, res, &j, i);
 		else

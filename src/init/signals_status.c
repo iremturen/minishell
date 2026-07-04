@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                      :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   signals_status.c                                   :+:      :+:    :+:   */
 /*                                                  +#+  +:+       +#+        */
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
@@ -11,30 +11,24 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// ctrl+c: input bufferini temizler, yeni satir basip promptu tazeler
-static void	sigint_handler(int sig)
+static volatile sig_atomic_t	*signal_status(void)
 {
-	set_signal(sig);
-	write(1, "\n", 1);
-	reset_readline_line();
+	static volatile sig_atomic_t	status = 0;
+
+	return (&status);
 }
 
-// interaktif mod: ctrl+c yakala, ctrl+\ ve sigpipe yoksay
-void	setup_signals_interactive(void)
+int	get_signal(void)
 {
-	struct sigaction	sa;
-
-	sa.sa_handler = sigint_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
+	return ((int)(*signal_status()));
 }
 
-// child sureci: her iki sinyal icin varsayilan davranisi geri yukle
-void	setup_signals_child(void)
+void	set_signal(int sig)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	*signal_status() = sig;
+}
+
+void	clear_signal(void)
+{
+	*signal_status() = 0;
 }

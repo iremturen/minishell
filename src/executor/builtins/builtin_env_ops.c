@@ -1,37 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   builtin_env_ops.c                                  :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../../minishell.h"
-
-// envp icinde key i arayip indeksini donduruyor, bulamazsa -1
-static int	env_find(char **envp, char *key)
-{
-	size_t	len;
-	int		i;
-
-	len = ft_strlen(key);
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], key, len) == 0
-			&& (envp[i][len] == '=' || envp[i][len] == '\0'))
-			return (i);
-		i++;
-	}
-	return (-1);
-}
 
 // envp ye key=val ekliyor ya da guncelliyior
 int	env_set(t_shell *shell, char *key, char *val)
 {
-	char	**new;
-	char	*tmp;
 	char	*entry;
 	int		idx;
-	int		n;
 
-	tmp = ft_strjoin(key, "=");
-	if (!tmp)
-		return (0);
-	entry = ft_strjoin(tmp, val);
-	free(tmp);
+	entry = create_env_entry(key, val);
 	if (!entry)
 		return (0);
 	idx = env_find(shell->envp, key);
@@ -41,19 +27,11 @@ int	env_set(t_shell *shell, char *key, char *val)
 		shell->envp[idx] = entry;
 		return (1);
 	}
-	n = 0;
-	while (shell->envp[n])
-		n++;
-	new = ft_calloc(n + 2, sizeof(char *));
-	if (!new)
+	if (!add_new_env(shell, entry))
 	{
 		free(entry);
 		return (0);
 	}
-	ft_memcpy(new, shell->envp, sizeof(char *) * n);
-	new[n] = entry;
-	free(shell->envp);
-	shell->envp = new;
 	return (1);
 }
 
@@ -140,6 +118,3 @@ void	builtin_unset(t_cmd *cmd, t_shell *shell)
 		i++;
 	}
 }
-
-
-

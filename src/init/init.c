@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // shell->envp icin hafiza ayiriyoruz, envp'nin uzunlugunu sayiyoruz
@@ -56,4 +67,13 @@ void	free_shell(t_shell *shell)
 		free(shell->envp);
 	}
 	free(shell);
+}
+
+void	print_prompt_if_needed(void)
+{
+	if (!isatty(STDIN_FILENO))
+	{
+		write(1, "minishell$ ", 11);
+		write(1, "\n", 1);
+	}
 }

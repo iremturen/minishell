@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                      :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   signals_readline_linux.c                           :+:      :+:    :+:   */
 /*                                                  +#+  +:+       +#+        */
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
@@ -11,30 +11,11 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// ctrl+c: input bufferini temizler, yeni satir basip promptu tazeler
-static void	sigint_handler(int sig)
-{
-	set_signal(sig);
-	write(1, "\n", 1);
-	reset_readline_line();
-}
+void	rl_replace_line(const char *text, int clear_undo);
 
-// interaktif mod: ctrl+c yakala, ctrl+\ ve sigpipe yoksay
-void	setup_signals_interactive(void)
+void	reset_readline_line(void)
 {
-	struct sigaction	sa;
-
-	sa.sa_handler = sigint_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_RESTART;
-	sigaction(SIGINT, &sa, NULL);
-	signal(SIGQUIT, SIG_IGN);
-	signal(SIGPIPE, SIG_IGN);
-}
-
-// child sureci: her iki sinyal icin varsayilan davranisi geri yukle
-void	setup_signals_child(void)
-{
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
 }

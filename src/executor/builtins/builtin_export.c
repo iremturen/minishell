@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../../minishell.h"
 
 // declare -x KEY="VALUE" formatinda bir env satirini yazıyor
@@ -19,7 +30,7 @@ static void	print_export_entry(char *entry)
 	write(1, "\"\n", 2);
 }
 
-// export icin key gecerli degisken ismi mi: harf/_ile baslamali, harf/rakam/_ olmali
+// export key gecerli mi: harf/_ ile baslamali, harf/rakam/_ olmali
 static int	is_valid_key(char *key)
 {
 	int	i;

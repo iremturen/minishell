@@ -1,4 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
+
+static t_token_type	get_token_type(char *value)
+{
+	if (!ft_strncmp(value, ">>", 3))
+		return (TOK_APPEND);
+	if (!ft_strncmp(value, "<<", 3))
+		return (TOK_HEREDOC);
+	if (!ft_strncmp(value, "|", 2))
+		return (TOK_PIPE);
+	if (!ft_strncmp(value, ">", 2))
+		return (TOK_REDIR_OUT);
+	if (!ft_strncmp(value, "<", 2))
+		return (TOK_REDIR_IN);
+	return (TOK_WORD);
+}
 
 // yeni token dugumu olusturuyor, tipi satir icerigine gore belirleniyor
 static t_token	*new_token(char *value)
@@ -19,18 +45,7 @@ static t_token	*new_token(char *value)
 		tok->is_quoted = 1;
 	else
 		tok->is_quoted = 0;
-	if (!ft_strncmp(value, ">>", 3))
-		tok->type = TOK_APPEND;
-	else if (!ft_strncmp(value, "<<", 3))
-		tok->type = TOK_HEREDOC;
-	else if (!ft_strncmp(value, "|", 2))
-		tok->type = TOK_PIPE;
-	else if (!ft_strncmp(value, ">", 2))
-		tok->type = TOK_REDIR_OUT;
-	else if (!ft_strncmp(value, "<", 2))
-		tok->type = TOK_REDIR_IN;
-	else
-		tok->type = TOK_WORD;
+	tok->type = get_token_type(value);
 	return (tok);
 }
 
@@ -90,18 +105,4 @@ t_token	*tokenize(char *line, t_shell *shell)
 	tokens = build_token_list(words);
 	free_array(words);
 	return (tokens);
-}
-
-// token listesini baslindan sonuna kadar temizliyor
-void	free_tokens(t_token *head)
-{
-	t_token	*next;
-
-	while (head)
-	{
-		next = head->next;
-		free(head->value);
-		free(head);
-		head = next;
-	}
 }

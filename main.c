@@ -1,16 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "minishell.h"
-
-# define PROMPT "minishell$ "
-
-// pipe ile calisirken readline prompt basmaz; tester ilk ciktiyi yanlis algilar
-static void	print_prompt_if_needed(void)
-{
-	if (!isatty(STDIN_FILENO))
-	{
-		write(1, PROMPT, ft_strlen(PROMPT));
-		write(1, "\n", 1);
-	}
-}
 
 // her satiri ilgili katmanlara gonderip sonuclari temizliyor
 static void	run_line(char *line, t_shell *shell)
@@ -42,9 +41,9 @@ static void	run_line(char *line, t_shell *shell)
 // readline NULL dondu: ctrl+c ise devam et (1), ctrl+d ise cik (0)
 static int	handle_null_line(void)
 {
-	if (g_signal == SIGINT)
+	if (get_signal() == SIGINT)
 	{
-		g_signal = 0;
+		clear_signal();
 		return (1);
 	}
 	write(1, "exit\n", 5);
@@ -54,9 +53,9 @@ static int	handle_null_line(void)
 // satiri isle: ctrl+c sonrasi $? = 130, sonra calistir ve bellek temizle
 static void	handle_line(char *line, t_shell *shell)
 {
-	if (g_signal == SIGINT)
+	if (get_signal() == SIGINT)
 		shell->last_exit = 130;
-	g_signal = 0;
+	clear_signal();
 	if (*line)
 	{
 		add_history(line);
@@ -65,19 +64,10 @@ static void	handle_line(char *line, t_shell *shell)
 	free(line);
 }
 
-// ana dongu: readline ile satir aliyor, isleme sokuyor
-int	main(int argc, char **argv, char **env)
+static void	shell_loop(t_shell *shell)
 {
-	t_shell	*shell;
 	char	*line;
-	int		exit_code;
 
-	(void)argc;
-	(void)argv;
-	shell = init_shell(env);
-	if (!shell)
-		return (1);
-	setup_signals_interactive();
 	while (1)
 	{
 		print_prompt_if_needed();
@@ -90,6 +80,21 @@ int	main(int argc, char **argv, char **env)
 		}
 		handle_line(line, shell);
 	}
+}
+
+// ana dongu: readline ile satir aliyor, isleme sokuyor
+int	main(int argc, char **argv, char **env)
+{
+	t_shell	*shell;
+	int		exit_code;
+
+	(void)argc;
+	(void)argv;
+	shell = init_shell(env);
+	if (!shell)
+		return (1);
+	setup_signals_interactive();
+	shell_loop(shell);
 	exit_code = shell->last_exit;
 	clear_history();
 	free_shell(shell);

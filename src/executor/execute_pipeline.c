@@ -1,98 +1,69 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   execute_pipeline.c                                 :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
-// builtin i forked child sureci icinde direkt calistiriyor
-static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
+static void	fill_fork_data(t_cmd *cur, t_pipe_ctx *ctx, t_fork_data *data)
 {
-	shell->last_exit = 0;
-	if (!ft_strncmp(cmd->argv[0], "echo", 5))
-		builtin_echo(cmd->argv);
-	else if (!ft_strncmp(cmd->argv[0], "pwd", 4))
-		builtin_pwd();
-	else if (!ft_strncmp(cmd->argv[0], "env", 4))
-		builtin_env(shell->envp);
-	else if (!ft_strncmp(cmd->argv[0], "cd", 3))
-		builtin_cd(cmd, shell);
-	else if (!ft_strncmp(cmd->argv[0], "unset", 6))
-		builtin_unset(cmd, shell);
-	else if (!ft_strncmp(cmd->argv[0], "export", 7))
-		builtin_export(cmd, shell);
-	else if (!ft_strncmp(cmd->argv[0], "exit", 5))
-		builtin_exit(cmd, shell);
-	exit(shell->last_exit);
+	data->in_fd = ctx->prev_fd;
+	if (cur->next)
+	{
+		data->out_fd = ctx->pipefd[1];
+		data->close_fd = ctx->pipefd[0];
+	}
+	else
+	{
+		data->out_fd = -1;
+		data->close_fd = -1;
+	}
+	data->shell = ctx->shell;
 }
 
-// child sureci: fd leri ayarlar, redir uygular, komutu calistirip cikiyor
-static void	exec_child(t_cmd *cmd, int in_fd, int out_fd, t_shell *shell)
+static int	run_pipe_step(t_cmd *cur, t_pipe_ctx *ctx)
 {
-	setup_signals_child();
-	if (in_fd != -1)
-	{
-		dup2(in_fd, STDIN_FILENO);
-		close(in_fd);
-	}
-	if (out_fd != -1)
-	{
-		dup2(out_fd, STDOUT_FILENO);
-		close(out_fd);
-	}
-	if (!apply_redirs(cmd->redirs, shell))
-		exit(1);
-	if (is_builtin(cmd->argv[0]))
-		exec_builtin_child(cmd, shell);
-	cmd->cmd_path = resolve_path(cmd->argv[0], shell->envp);
-	if (!cmd->cmd_path)
-	{
-		write(2, "minishell: ", 11);
-		write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
-		write(2, ": command not found\n", 20);
-		exit(127);
-	}
-	exec_or_exit(cmd, shell->envp);
-}
+	t_fork_data	data;
 
-// fork yapar, parent ta gereksiz write ucunu kapatir
-static pid_t	fork_cmd(t_cmd *cmd, int in_fd, int out_fd, int close_fd, t_shell *shell)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("fork");
-		if (out_fd != -1)
-			close(out_fd);
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		if (close_fd != -1)
-			close(close_fd);
-		exec_child(cmd, in_fd, out_fd, shell);
-	}
-	if (out_fd != -1)
-		close(out_fd);
-	return (pid);
+	if (cur->next && pipe(ctx->pipefd) == -1)
+		return (0);
+	fill_fork_data(cur, ctx, &data);
+	ctx->pids[ctx->n] = pipeline_fork(cur, &data);
+	if (ctx->prev_fd != -1)
+		close(ctx->prev_fd);
+	if (cur->next)
+		ctx->prev_fd = ctx->pipefd[0];
+	else
+		ctx->prev_fd = -1;
+	ctx->n++;
+	return (1);
 }
 
 // tum alt surecleri bekler, gecersiz pid leri atlar, son exit kodunu gunceller
-static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
+static void	wait_cmds(t_pipe_ctx *ctx)
 {
 	int	status;
 	int	i;
 
 	i = 0;
 	status = 0;
-	while (i < n)
+	while (i < ctx->n)
 	{
-		if (pids[i] > 0)
-			waitpid(pids[i], &status, 0);
+		if (ctx->pids[i] > 0)
+			waitpid(ctx->pids[i], &status, 0);
 		i++;
 	}
 	if (WIFEXITED(status))
-		shell->last_exit = WEXITSTATUS(status);
+		ctx->shell->last_exit = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
-		shell->last_exit = 128 + WTERMSIG(status);
+		ctx->shell->last_exit = 128 + WTERMSIG(status);
 		if (WTERMSIG(status) == SIGQUIT)
 			write(2, "Quit (core dumped)\n", 19);
 		else if (WTERMSIG(status) == SIGINT)
@@ -103,27 +74,20 @@ static void	wait_cmds(pid_t *pids, int n, t_shell *shell)
 // pipe zinciri kurar, her komutu fork layip stdin stdout baglantisini sagliyor
 void	execute_pipeline(t_cmd *cmds, t_shell *shell)
 {
-	pid_t	pids[256];
-	int		pipefd[2];
-	int		prev_fd;
-	int		n;
-	t_cmd	*cur;
+	t_pipe_ctx	ctx;
+	t_cmd		*cur;
 
-	prev_fd = -1;
-	n = 0;
+	ctx.prev_fd = -1;
+	ctx.n = 0;
+	ctx.shell = shell;
 	cur = cmds;
 	while (cur)
 	{
-		if (cur->next && pipe(pipefd) == -1)
+		if (!run_pipe_step(cur, &ctx))
 			break ;
-		pids[n] = fork_cmd(cur, prev_fd, cur->next ? pipefd[1] : -1, cur->next ? pipefd[0] : -1, shell);
-		if (prev_fd != -1)
-			close(prev_fd);
-		prev_fd = cur->next ? pipefd[0] : -1;
-		n++;
 		cur = cur->next;
 	}
-	if (prev_fd != -1)
-		close(prev_fd);
-	wait_cmds(pids, n, shell);
+	if (ctx.prev_fd != -1)
+		close(ctx.prev_fd);
+	wait_cmds(&ctx);
 }

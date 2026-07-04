@@ -1,53 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
-
-// yeni bos bir komut dugumu olusturuyor
-static t_cmd	*new_cmd(void)
-{
-	t_cmd	*cmd;
-
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		return (NULL);
-	cmd->argv = NULL;
-	cmd->cmd_path = NULL;
-	cmd->is_builtin = 0;
-	cmd->redirs = NULL;
-	cmd->next = NULL;
-	return (cmd);
-}
-
-// t_cmd bagli listesini baslindan sonuna kadar temizliyor
-void	free_cmds(t_cmd *head)
-{
-	t_cmd	*next;
-	t_redir	*redir;
-	t_redir	*rnext;
-	int		i;
-
-	while (head)
-	{
-		next = head->next;
-		if (head->argv)
-		{
-			i = 0;
-			while (head->argv[i])
-				free(head->argv[i++]);
-			free(head->argv);
-		}
-		redir = head->redirs;
-		while (redir)
-		{
-			rnext = redir->next;
-			free(redir->file);
-			free(redir->delimiter);
-			free(redir);
-			redir = rnext;
-		}
-		free(head->cmd_path);
-		free(head);
-		head = next;
-	}
-}
 
 // argv dizisini bir buyuk yeni dizi olarak kopyalayip donduruyor
 static char	**grow_argv(char **old, int len)
@@ -106,6 +68,28 @@ static int	handle_redir(t_cmd *cmd, t_token **cur)
 	return (1);
 }
 
+static int	parse_token(t_token **tok, t_cmd **cur)
+{
+	if ((*tok)->type == TOK_WORD)
+	{
+		if (!cmd_add_arg(*cur, (*tok)->value))
+			return (0);
+	}
+	else if ((*tok)->type == TOK_PIPE)
+	{
+		(*cur)->next = new_cmd();
+		if (!(*cur)->next)
+			return (0);
+		*cur = (*cur)->next;
+	}
+	else
+	{
+		if (!handle_redir(*cur, tok))
+			return (0);
+	}
+	return (1);
+}
+
 // tok_word, tok_pipe ve tok_redir tokenlarini isliyor
 t_cmd	*parse(t_token *tokens)
 {
@@ -122,19 +106,7 @@ t_cmd	*parse(t_token *tokens)
 	tok = tokens;
 	while (tok)
 	{
-		if (tok->type == TOK_WORD)
-		{
-			if (!cmd_add_arg(cur, tok->value))
-				return (free_cmds(head), NULL);
-		}
-		else if (tok->type == TOK_PIPE)
-		{
-			cur->next = new_cmd();
-			if (!cur->next)
-				return (free_cmds(head), NULL);
-			cur = cur->next;
-		}
-		else if (!handle_redir(cur, &tok))
+		if (!parse_token(&tok, &cur))
 			return (free_cmds(head), NULL);
 		tok = tok->next;
 	}

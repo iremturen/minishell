@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   execute_single.c                                   :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // komut yok ya da izinsiz: 127/126 ile hata yazdirir
@@ -32,6 +43,14 @@ static void	update_exit_status(int status, t_shell *shell)
 	}
 }
 
+static void	exec_single_child(t_cmd *cmd, t_shell *shell)
+{
+	setup_signals_child();
+	if (!apply_redirs(cmd->redirs, shell))
+		exit(1);
+	exec_or_exit(cmd, shell->envp);
+}
+
 // tek bir dis komutu fork ile calistiriyor, last_exit i gunceller
 void	execute_single(t_cmd *cmd, t_shell *shell)
 {
@@ -55,12 +74,7 @@ void	execute_single(t_cmd *cmd, t_shell *shell)
 		return ;
 	}
 	if (pid == 0)
-	{
-		setup_signals_child();
-		if (!apply_redirs(cmd->redirs, shell))
-			exit(1);
-		exec_or_exit(cmd, shell->envp);
-	}
+		exec_single_child(cmd, shell);
 	waitpid(pid, &status, 0);
 	free(cmd->cmd_path);
 	cmd->cmd_path = NULL;

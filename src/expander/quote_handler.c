@@ -1,4 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   quote_handler.c                                    :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
+
+static int	handle_quote_char(char c, int *q)
+{
+	if (c == '\'' && *q != Q_DOUBLE)
+	{
+		if (*q == Q_SINGLE)
+			*q = Q_NONE;
+		else
+			*q = Q_SINGLE;
+		return (1);
+	}
+	if (c == '"' && *q != Q_SINGLE)
+	{
+		if (*q == Q_DOUBLE)
+			*q = Q_NONE;
+		else
+			*q = Q_DOUBLE;
+		return (1);
+	}
+	return (0);
+}
 
 // tirnak karakterlerini silerek temiz bir string donduruyor
 static char	*strip_one(char *str)
@@ -16,25 +48,10 @@ static char	*strip_one(char *str)
 	j = 0;
 	while (str[i])
 	{
-		if (str[i] == '\'' && q != Q_DOUBLE)
-		{
-			if (q == Q_SINGLE)
-				q = Q_NONE;
-			else
-				q = Q_SINGLE;
+		if (handle_quote_char(str[i], &q))
 			i++;
-			continue ;
-		}
-		if (str[i] == '"' && q != Q_SINGLE)
-		{
-			if (q == Q_DOUBLE)
-				q = Q_NONE;
-			else
-				q = Q_DOUBLE;
-			i++;
-			continue ;
-		}
-		res[j++] = str[i++];
+		else
+			res[j++] = str[i++];
 	}
 	res[j] = '\0';
 	return (res);

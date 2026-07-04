@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   path_utils.c                                       :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
 // envp icinde PATH= satirini bulup dizin listesine ceviriyor
@@ -71,7 +82,8 @@ void	exec_or_exit(t_cmd *cmd, char **envp)
 	execve(cmd->cmd_path, cmd->argv, envp);
 	write(2, "minishell: ", 11);
 	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
-	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0
+		&& S_ISDIR(path_stat.st_mode))
 	{
 		write(2, ": is a directory\n", 17);
 		exit(126);

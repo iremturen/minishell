@@ -9,9 +9,18 @@ LDLIBS		= -lft -lreadline
 LIBFT		= Libft/libft.a
 
 # ── Init ─────────────────────────────────────────────────
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+SIGNALS_RL	= src/init/signals_readline_linux.c
+else
+SIGNALS_RL	= src/init/signals_readline_mac.c
+endif
+
 INIT_SRCS	= \
 	src/init/init.c \
-	src/init/signals.c
+	src/init/signals.c \
+	src/init/signals_status.c \
+	$(SIGNALS_RL)
 
 # ── Lexer ────────────────────────────────────────────────
 LEXER_SRCS	= \
@@ -29,6 +38,7 @@ PARSER_SRCS	= \
 # ── Expander ─────────────────────────────────────────────
 EXPANDER_SRCS	= \
 	src/expander/expander.c \
+	src/expander/expander_utils.c \
 	src/expander/quote_handler.c
 
 # ── Executor ─────────────────────────────────────────────
@@ -36,11 +46,14 @@ EXECUTOR_SRCS	= \
 	src/executor/executor.c \
 	src/executor/execute_single.c \
 	src/executor/execute_pipeline.c \
+	src/executor/pipeline_fork.c \
 	src/executor/path_utils.c \
 	src/executor/redir.c \
+	src/executor/redir_heredoc.c \
 	src/executor/builtins/builtin_executor.c \
 	src/executor/builtins/builtin_utils.c \
 	src/executor/builtins/builtin_env_ops.c \
+	src/executor/builtins/builtin_env_utils.c \
 	src/executor/builtins/builtin_exit.c \
 	src/executor/builtins/builtin_export.c
 

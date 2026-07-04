@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   builtin_utils.c                                    :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../../minishell.h"
 
 // echo: ardisik -n bayraklarini atlar, kalan argumanlari yazar
@@ -51,7 +62,6 @@ void	builtin_env(char **envp)
 		i++;
 	}
 }
-
 
 // is_builtin: komut adinin builtin olup olmadigini kontrol ediyor
 int	is_builtin(char *cmd)

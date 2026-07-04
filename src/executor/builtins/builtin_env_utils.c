@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                      :::      ::::::::   */
-/*   builtin_exit.c                                     :+:      :+:    :+:   */
+/*   builtin_env_utils.c                                :+:      :+:    :+:   */
 /*                                                  +#+  +:+       +#+        */
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
@@ -11,43 +11,50 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// verilen string tamamen sayisal mi kontrol ediyor
-static int	is_numeric(char *s)
+int	env_find(char **envp, char *key)
 {
-	int	i;
+	size_t	len;
+	int		i;
 
+	len = ft_strlen(key);
 	i = 0;
-	if (s[i] == '-' || s[i] == '+')
-		i++;
-	if (!s[i])
-		return (0);
-	while (s[i])
+	while (envp[i])
 	{
-		if (!ft_isdigit(s[i]))
-			return (0);
+		if (ft_strncmp(envp[i], key, len) == 0
+			&& (envp[i][len] == '=' || envp[i][len] == '\0'))
+			return (i);
 		i++;
 	}
-	return (1);
+	return (-1);
 }
 
-// exit: sayi degil ise 255, cok arguman ise hata, gecerliyse cikiyor
-void	builtin_exit(t_cmd *cmd, t_shell *shell)
+char	*create_env_entry(char *key, char *val)
 {
-	write(1, "exit\n", 5);
-	if (!cmd->argv[1])
-		exit(shell->last_exit);
-	if (!is_numeric(cmd->argv[1]))
-	{
-		write(2, "minishell: exit: ", 17);
-		write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
-		write(2, ": numeric argument required\n", 28);
-		exit(255);
-	}
-	if (cmd->argv[2])
-	{
-		write(2, "minishell: exit: too many arguments\n", 36);
-		shell->last_exit = 1;
-		return ;
-	}
-	exit((unsigned char)ft_atoi(cmd->argv[1]));
+	char	*tmp;
+	char	*entry;
+
+	tmp = ft_strjoin(key, "=");
+	if (!tmp)
+		return (NULL);
+	entry = ft_strjoin(tmp, val);
+	free(tmp);
+	return (entry);
+}
+
+int	add_new_env(t_shell *shell, char *entry)
+{
+	char	**new;
+	int		n;
+
+	n = 0;
+	while (shell->envp[n])
+		n++;
+	new = ft_calloc(n + 2, sizeof(char *));
+	if (!new)
+		return (0);
+	ft_memcpy(new, shell->envp, sizeof(char *) * n);
+	new[n] = entry;
+	free(shell->envp);
+	shell->envp = new;
+	return (1);
 }

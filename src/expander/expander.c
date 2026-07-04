@@ -1,53 +1,39 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                      :::      ::::::::   */
+/*   expander.c                                         :+:      :+:    :+:   */
+/*                                                  +#+  +:+       +#+        */
+/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*                                                  #+#    #+#             */
+/*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
+/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../../minishell.h"
 
-// envp de NAME=value satirini arayip value yu donduruyor
-static char	*get_env_val(char *name, char **envp)
+static int	expand_exit_status(char **res, int *i, t_shell *shell)
 {
-	size_t	len;
-	int		i;
+	char	*num;
+	int		ret;
 
-	len = ft_strlen(name);
-	i = 0;
-	while (envp[i])
-	{
-		if (ft_strncmp(envp[i], name, len) == 0 && envp[i][len] == '=')
-			return (envp[i] + len + 1);
-		i++;
-	}
-	return (NULL);
-}
-
-// result stringine src yi ekliyor, bellegi yonetiyor
-static int	str_append(char **dest, char *src)
-{
-	char	*tmp;
-
-	if (!src)
-		return (1);
-	tmp = ft_strjoin(*dest, src);
-	if (!tmp)
+	num = ft_itoa(shell->last_exit);
+	if (!num)
 		return (0);
-	free(*dest);
-	*dest = tmp;
-	return (1);
+	(*i)++;
+	ret = str_append(res, num);
+	free(num);
+	return (ret);
 }
 
 // $ den sonraki degiskeni genisletiyor: $? exit kodu, $VAR env degeri
 static int	expand_dollar(char **res, char *str, int *i, t_shell *shell)
 {
 	char	*name;
-	char	*num;
 	char	*val;
 	int		start;
 
 	if (str[*i] == '?')
-	{
-		num = ft_itoa(shell->last_exit);
-		(*i)++;
-		if (!str_append(res, num))
-			return (free(num), 0);
-		return (free(num), 1);
-	}
+		return (expand_exit_status(res, i, shell));
 	if (!ft_isalpha(str[*i]) && str[*i] != '_')
 		return (str_append(res, "$"));
 	start = *i;
@@ -63,40 +49,34 @@ static int	expand_dollar(char **res, char *str, int *i, t_shell *shell)
 	return (1);
 }
 
-// token degerini karakter karakter tarayip $ genisletmesi yaparak yeni string uretir
+// token degerini tarayip $ genisletmesi yaparak yeni string uretir
 char	*build_expanded(char *str, t_shell *shell)
 {
 	char	*res;
-	char	buf[2];
 	int		i;
 	int		in_sq;
 
 	res = ft_strdup("");
 	if (!res)
 		return (NULL);
-	buf[1] = '\0';
 	i = 0;
 	in_sq = 0;
 	while (str[i])
 	{
 		if (str[i] == '\'')
 			in_sq = !in_sq;
-		if (str[i] == '$' && !in_sq && str[i + 1])
+		if (str[i] == '$' && !in_sq && str[i + 1] && ++i)
 		{
-			i++;
 			if (!expand_dollar(&res, str, &i, shell))
 				return (free(res), NULL);
-			continue ;
 		}
-		buf[0] = str[i];
-		if (!str_append(&res, buf))
+		else if (!append_char(&res, str[i++]))
 			return (free(res), NULL);
-		i++;
 	}
 	return (res);
 }
 
-// her tok_word icin build_expanded cagirip degeri gunceller, hata olursa eskiyi korur
+// her tok_word icin build_expanded cagirip degeri gunceller
 void	expand_tokens(t_token *head, t_shell *shell)
 {
 	char	*new_val;
@@ -113,35 +93,5 @@ void	expand_tokens(t_token *head, t_shell *shell)
 			}
 		}
 		head = head->next;
-	}
-}
-
-// filtreleme: tırnaksız olup expansion sonrası boş string kalan tokenleri temizler
-void	filter_empty_tokens(t_token **head)
-{
-	t_token	*cur;
-	t_token	*prev;
-	t_token	*temp;
-
-	cur = *head;
-	prev = NULL;
-	while (cur)
-	{
-		if (cur->type == TOK_WORD && ft_strlen(cur->value) == 0 && !cur->is_quoted)
-		{
-			temp = cur->next;
-			if (prev)
-				prev->next = temp;
-			else
-				*head = temp;
-			free(cur->value);
-			free(cur);
-			cur = temp;
-		}
-		else
-		{
-			prev = cur;
-			cur = cur->next;
-		}
 	}
 }
