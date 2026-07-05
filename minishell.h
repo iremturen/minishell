@@ -149,6 +149,8 @@ void		execute_pipeline(t_cmd *cmds, t_shell *shell);
 pid_t		pipeline_fork(t_cmd *cmd, t_fork_data *data);
 int			apply_redirs(t_redir *redir, t_shell *shell);
 int			process_heredoc(t_redir *redir, t_shell *shell);
+int			prepare_heredocs(t_cmd *cmd, t_shell *shell);
+void		close_heredoc_fds(t_cmd *cmd);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);

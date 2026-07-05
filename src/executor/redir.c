@@ -45,30 +45,29 @@ static int	apply_single_redir(t_redir *r)
 	return (1);
 }
 
-static int	apply_heredoc(t_redir *redir, t_shell *shell)
+static int	apply_heredoc(t_redir *redir)
 {
-	int	fd;
-
-	fd = process_heredoc(redir, shell);
-	setup_signals_interactive(shell);
-	if (fd == -1)
+	if (redir->fd < 0)
 		return (0);
-	if (dup2(fd, STDIN_FILENO) == -1)
+	if (dup2(redir->fd, STDIN_FILENO) == -1)
 	{
-		close(fd);
+		close(redir->fd);
+		redir->fd = -1;
 		return (0);
 	}
-	close(fd);
+	close(redir->fd);
+	redir->fd = -1;
 	return (1);
 }
 
 int	apply_redirs(t_redir *redir, t_shell *shell)
 {
+	(void)shell;
 	while (redir)
 	{
 		if (redir->type == TOK_HEREDOC)
 		{
-			if (!apply_heredoc(redir, shell))
+			if (!apply_heredoc(redir))
 				return (0);
 		}
 		else if (!apply_single_redir(redir))
