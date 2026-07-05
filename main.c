@@ -39,11 +39,6 @@ static void	run_line(char *line, t_shell *shell)
 
 static int	handle_null_line(void)
 {
-	if (get_signal() == SIGINT)
-	{
-		clear_signal();
-		return (1);
-	}
 	write(1, "exit\n", 5);
 	return (0);
 }
@@ -89,7 +84,7 @@ int	main(int argc, char **argv, char **env)
 	shell = init_shell(env);
 	if (!shell)
 		return (1);
-	setup_signals_interactive();
+	setup_signals_interactive(shell);
 	shell_loop(shell);
 	exit_code = shell->last_exit;
 	clear_history();

@@ -80,6 +80,84 @@ static int	do_export_one(char *arg, t_shell *shell)
 	return (0);
 }
 
+static int	cmp_env_key(char *a, char *b)
+{
+	char	*eq_a;
+	char	*eq_b;
+	size_t	len_a;
+	size_t	len_b;
+	size_t	min;
+	int		cmp;
+
+	eq_a = ft_strchr(a, '=');
+	eq_b = ft_strchr(b, '=');
+	len_a = eq_a ? (size_t)(eq_a - a) : ft_strlen(a);
+	len_b = eq_b ? (size_t)(eq_b - b) : ft_strlen(b);
+	min = len_a;
+	if (len_b < min)
+		min = len_b;
+	cmp = ft_strncmp(a, b, min);
+	if (cmp != 0)
+		return (cmp);
+	if (len_a < len_b)
+		return (-1);
+	if (len_a > len_b)
+		return (1);
+	return (0);
+}
+
+static void	sort_export_order(int *order, int n, char **envp)
+{
+	int	i;
+	int	j;
+	int	tmp;
+
+	i = 0;
+	while (i < n - 1)
+	{
+		j = 0;
+		while (j < n - i - 1)
+		{
+			if (cmp_env_key(envp[order[j]], envp[order[j + 1]]) > 0)
+			{
+				tmp = order[j];
+				order[j] = order[j + 1];
+				order[j + 1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+static void	print_sorted_export(char **envp)
+{
+	int		n;
+	int		*order;
+	int		i;
+
+	n = 0;
+	while (envp[n])
+		n++;
+	order = malloc(sizeof(int) * n);
+	if (!order)
+		return ;
+	i = 0;
+	while (i < n)
+	{
+		order[i] = i;
+		i++;
+	}
+	sort_export_order(order, n, envp);
+	i = 0;
+	while (i < n)
+	{
+		print_export_entry(envp[order[i]]);
+		i++;
+	}
+	free(order);
+}
+
 void	builtin_export(t_cmd *cmd, t_shell *shell)
 {
 	int	i;
@@ -87,12 +165,7 @@ void	builtin_export(t_cmd *cmd, t_shell *shell)
 
 	if (!cmd->argv[1])
 	{
-		i = 0;
-		while (shell->envp[i])
-		{
-			print_export_entry(shell->envp[i]);
-			i++;
-		}
+		print_sorted_export(shell->envp);
 		return ;
 	}
 	err = 0;

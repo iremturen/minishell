@@ -17,10 +17,16 @@ static void	heredoc_sigint(int sig)
 	write(1, "\n", 1);
 }
 
-static void	write_expanded_line(int fd, char *line, t_shell *shell)
+static void	write_heredoc_line(int fd, char *line, t_shell *shell, int expand)
 {
 	char	*exp;
 
+	if (!expand)
+	{
+		write(fd, line, ft_strlen(line));
+		write(fd, "\n", 1);
+		return ;
+	}
 	exp = build_expanded(line, shell);
 	if (exp)
 	{
@@ -32,7 +38,7 @@ static void	write_expanded_line(int fd, char *line, t_shell *shell)
 	write(fd, "\n", 1);
 }
 
-int	process_heredoc(char *delim, t_shell *shell)
+int	process_heredoc(t_redir *redir, t_shell *shell)
 {
 	int		pipefd[2];
 	char	*line;
@@ -42,16 +48,16 @@ int	process_heredoc(char *delim, t_shell *shell)
 	signal(SIGQUIT, SIG_IGN);
 	if (pipe(pipefd) == -1)
 		return (-1);
-	dlen = ft_strlen(delim);
+	dlen = ft_strlen(redir->file);
 	while (1)
 	{
 		line = readline("> ");
-		if (!line || get_signal() || ft_strncmp(line, delim, dlen + 1) == 0)
+		if (!line || get_signal() || ft_strncmp(line, redir->file, dlen + 1) == 0)
 		{
 			free(line);
 			break ;
 		}
-		write_expanded_line(pipefd[1], line, shell);
+		write_heredoc_line(pipefd[1], line, shell, redir->heredoc_expand);
 		free(line);
 	}
 	close(pipefd[1]);

@@ -49,8 +49,8 @@ static int	apply_heredoc(t_redir *redir, t_shell *shell)
 {
 	int	fd;
 
-	fd = process_heredoc(redir->file, shell);
-	setup_signals_interactive();
+	fd = process_heredoc(redir, shell);
+	setup_signals_interactive(shell);
 	if (fd == -1)
 		return (0);
 	if (dup2(fd, STDIN_FILENO) == -1)

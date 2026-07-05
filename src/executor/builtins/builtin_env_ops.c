@@ -11,6 +11,24 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
+static int	is_valid_key(char *key)
+{
+	int	i;
+
+	if (!key || !key[0])
+		return (0);
+	if (!ft_isalpha((unsigned char)key[0]) && key[0] != '_')
+		return (0);
+	i = 1;
+	while (key[i])
+	{
+		if (!ft_isalnum((unsigned char)key[i]) && key[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	env_set(t_shell *shell, char *key, char *val)
 {
 	char	*entry;
@@ -114,10 +132,21 @@ void	builtin_unset(t_cmd *cmd, t_shell *shell)
 	int	idx;
 	int	n;
 	int	i;
+	int	err;
 
+	err = 0;
 	i = 1;
 	while (cmd->argv[i])
 	{
+		if (!is_valid_key(cmd->argv[i]))
+		{
+			write(2, "minishell: unset: '", 19);
+			write(2, cmd->argv[i], ft_strlen(cmd->argv[i]));
+			write(2, "': not a valid identifier\n", 26);
+			err = 1;
+			i++;
+			continue ;
+		}
 		idx = env_find(shell->envp, cmd->argv[i]);
 		if (idx != -1)
 		{
@@ -132,4 +161,6 @@ void	builtin_unset(t_cmd *cmd, t_shell *shell)
 		}
 		i++;
 	}
+	if (err)
+		shell->last_exit = 1;
 }

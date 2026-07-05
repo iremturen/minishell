@@ -11,17 +11,23 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
+static t_shell	*g_shell_sig = NULL;
+
 static void	sigint_handler(int sig)
 {
-	set_signal(sig);
+	(void)sig;
+	if (g_shell_sig)
+		g_shell_sig->last_exit = 130;
 	write(1, "\n", 1);
 	reset_readline_line();
+	clear_signal();
 }
 
-void	setup_signals_interactive(void)
+void	setup_signals_interactive(t_shell *shell)
 {
 	struct sigaction	sa;
 
+	g_shell_sig = shell;
 	sa.sa_handler = sigint_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;

@@ -53,13 +53,21 @@ int	validate_lexer_syntax(char **args)
 	if (!args || !args[0])
 		return (0);
 	if (is_pipe_token(args[0]))
+	{
+		if (args[1] && is_pipe_token(args[1]))
+			return (print_syntax_error("||"));
 		return (print_syntax_error(args[0]));
+	}
 	i = 0;
 	while (args[i])
 	{
 		if (is_pipe_token(args[i])
 			&& (!args[i + 1] || is_pipe_token(args[i + 1])))
+		{
+			if (args[i + 1] && is_pipe_token(args[i + 1]))
+				return (print_syntax_error("||"));
 			return (print_syntax_error(args[i]));
+		}
 		if (is_redir_token(args[i])
 			&& (!args[i + 1] || is_pipe_token(args[i + 1])
 				|| is_redir_token(args[i + 1])))

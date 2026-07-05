@@ -60,7 +60,7 @@ static int	handle_redir(t_cmd *cmd, t_token **cur)
 	*cur = (*cur)->next;
 	if (!(*cur) || (*cur)->type != TOK_WORD)
 		return (0);
-	if (!cmd_add_redir(cmd, type, (*cur)->value))
+	if (!cmd_add_redir(cmd, type, (*cur)->value, !(*cur)->is_quoted))
 		return (0);
 	return (1);
 }

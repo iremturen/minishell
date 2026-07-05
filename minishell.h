@@ -61,6 +61,7 @@ typedef struct s_redir
 	char			*file;
 	char			*delimiter;
 	int				fd;
+	int				heredoc_expand;
 	t_token_type	type;
 	struct s_redir	*next;
 }	t_redir;
@@ -103,7 +104,7 @@ typedef struct s_pipe_ctx
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
 void		print_prompt_if_needed(void);
-void		setup_signals_interactive(void);
+void		setup_signals_interactive(t_shell *shell);
 void		setup_signals_child(void);
 void		reset_readline_line(void);
 int			get_signal(void);
@@ -127,8 +128,9 @@ void		free_array(char **arr);
 t_cmd		*parse(t_token *tokens);
 t_cmd		*new_cmd(void);
 void		free_cmds(t_cmd *head);
-t_redir		*new_redir(t_token_type type, char *file);
-int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file);
+t_redir		*new_redir(t_token_type type, char *file, int heredoc_expand);
+int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file,
+			int heredoc_expand);
 
 // expander
 void		expand_tokens(t_token *head, t_shell *shell);
@@ -146,7 +148,7 @@ void		execute_single(t_cmd *cmd, t_shell *shell);
 void		execute_pipeline(t_cmd *cmds, t_shell *shell);
 pid_t		pipeline_fork(t_cmd *cmd, t_fork_data *data);
 int			apply_redirs(t_redir *redir, t_shell *shell);
-int			process_heredoc(char *delim, t_shell *shell);
+int			process_heredoc(t_redir *redir, t_shell *shell);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
