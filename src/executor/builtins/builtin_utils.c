@@ -54,8 +54,11 @@ void	builtin_env(char **envp)
 	i = 0;
 	while (envp[i])
 	{
-		write(1, envp[i], ft_strlen(envp[i]));
-		write(1, "\n", 1);
+		if (ft_strchr(envp[i], '='))
+		{
+			write(1, envp[i], ft_strlen(envp[i]));
+			write(1, "\n", 1);
+		}
 		i++;
 	}
 }

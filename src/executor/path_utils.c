@@ -74,8 +74,13 @@ char	*resolve_path(char *cmd, char **envp)
 void	exec_or_exit(t_cmd *cmd, char **envp)
 {
 	struct stat	path_stat;
+	char		**exec_env;
 
-	execve(cmd->cmd_path, cmd->argv, envp);
+	exec_env = build_exec_envp(envp);
+	if (!exec_env)
+		exit(1);
+	execve(cmd->cmd_path, cmd->argv, exec_env);
+	free(exec_env);
 	write(2, "minishell: ", 11);
 	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0

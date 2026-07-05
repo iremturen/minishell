@@ -64,7 +64,7 @@ static int	do_export_one(char *arg, t_shell *shell)
 	{
 		if (!is_valid_key(arg))
 			return (print_export_error(arg), 1);
-		return (!env_set(shell, arg, ""));
+		return (!env_export(shell, arg));
 	}
 	key = ft_substr(arg, 0, eq - arg);
 	if (!key)

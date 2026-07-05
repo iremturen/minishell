@@ -162,8 +162,10 @@ void		builtin_cd(t_cmd *cmd, t_shell *shell);
 void		builtin_unset(t_cmd *cmd, t_shell *shell);
 void		builtin_export(t_cmd *cmd, t_shell *shell);
 int			env_set(t_shell *shell, char *key, char *val);
+int			env_export(t_shell *shell, char *key);
 int			env_find(char **envp, char *key);
 char		*create_env_entry(char *key, char *val);
 int			add_new_env(t_shell *shell, char *entry);
+char		**build_exec_envp(char **envp);
 
 #endif

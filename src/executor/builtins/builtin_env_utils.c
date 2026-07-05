@@ -58,3 +58,26 @@ int	add_new_env(t_shell *shell, char *entry)
 	shell->envp = new;
 	return (1);
 }
+
+char	**build_exec_envp(char **envp)
+{
+	char	**exec_env;
+	int		i;
+	int		j;
+
+	i = 0;
+	while (envp[i])
+		i++;
+	exec_env = ft_calloc(i + 1, sizeof(char *));
+	if (!exec_env)
+		return (NULL);
+	i = 0;
+	j = 0;
+	while (envp[i])
+	{
+		if (ft_strchr(envp[i], '='))
+			exec_env[j++] = envp[i];
+		i++;
+	}
+	return (exec_env);
+}

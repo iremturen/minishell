@@ -34,6 +34,25 @@ int	env_set(t_shell *shell, char *key, char *val)
 	return (1);
 }
 
+int	env_export(t_shell *shell, char *key)
+{
+	char	*entry;
+	int		idx;
+
+	idx = env_find(shell->envp, key);
+	if (idx != -1)
+		return (1);
+	entry = ft_strdup(key);
+	if (!entry)
+		return (0);
+	if (!add_new_env(shell, entry))
+	{
+		free(entry);
+		return (0);
+	}
+	return (1);
+}
+
 static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
 	int	idx;
