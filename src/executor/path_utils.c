@@ -6,7 +6,7 @@
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
 /*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
-/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 18:00:00 by azkaraka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../../minishell.h"
@@ -71,16 +71,10 @@ char	*resolve_path(char *cmd, char **envp)
 	return (result);
 }
 
-void	exec_or_exit(t_cmd *cmd, char **envp)
+static void	exec_print_err(t_cmd *cmd)
 {
 	struct stat	path_stat;
-	char		**exec_env;
 
-	exec_env = build_exec_envp(envp);
-	if (!exec_env)
-		exit(1);
-	execve(cmd->cmd_path, cmd->argv, exec_env);
-	free(exec_env);
 	write(2, "minishell: ", 11);
 	write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
 	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0
@@ -103,4 +97,16 @@ void	exec_or_exit(t_cmd *cmd, char **envp)
 	write(2, strerror(errno), ft_strlen(strerror(errno)));
 	write(2, "\n", 1);
 	exit(126);
+}
+
+void	exec_or_exit(t_cmd *cmd, char **envp)
+{
+	char	**exec_env;
+
+	exec_env = build_exec_envp(envp);
+	if (!exec_env)
+		exit(1);
+	execve(cmd->cmd_path, cmd->argv, exec_env);
+	free(exec_env);
+	exec_print_err(cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
 /*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
-/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 18:00:00 by azkaraka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../../minishell.h"
@@ -16,11 +16,6 @@ static int	token_is(const char *token, const char *expected)
 	if (!token || !expected)
 		return (0);
 	return (ft_strncmp(token, expected, ft_strlen(expected) + 1) == 0);
-}
-
-static int	is_pipe_token(const char *token)
-{
-	return (token_is(token, "|"));
 }
 
 static int	is_redir_token(const char *token)
@@ -46,35 +41,46 @@ int	print_syntax_error(const char *token)
 	return (2);
 }
 
+static int	check_args_syntax(char **args, int i)
+{
+	if (token_is(args[i], "|"))
+	{
+		if (!args[i + 1] || token_is(args[i + 1], "|"))
+		{
+			if (args[i + 1] && token_is(args[i + 1], "|"))
+				return (print_syntax_error("||"));
+			return (print_syntax_error(args[i]));
+		}
+	}
+	if (is_redir_token(args[i])
+		&& (!args[i + 1] || token_is(args[i + 1], "|")
+			|| is_redir_token(args[i + 1])))
+		return (print_syntax_error(args[i + 1]));
+	return (0);
+}
+
 int	validate_lexer_syntax(char **args)
 {
 	int	i;
+	int	err;
 
 	if (!args || !args[0])
 		return (0);
-	if (is_pipe_token(args[0]))
+	if (token_is(args[0], "|"))
 	{
-		if (args[1] && is_pipe_token(args[1]))
+		if (args[1] && token_is(args[1], "|"))
 			return (print_syntax_error("||"));
 		return (print_syntax_error(args[0]));
 	}
 	i = 0;
 	while (args[i])
 	{
-		if (is_pipe_token(args[i])
-			&& (!args[i + 1] || is_pipe_token(args[i + 1])))
-		{
-			if (args[i + 1] && is_pipe_token(args[i + 1]))
-				return (print_syntax_error("||"));
-			return (print_syntax_error(args[i]));
-		}
-		if (is_redir_token(args[i])
-			&& (!args[i + 1] || is_pipe_token(args[i + 1])
-				|| is_redir_token(args[i + 1])))
-			return (print_syntax_error(args[i + 1]));
+		err = check_args_syntax(args, i);
+		if (err)
+			return (err);
 		i++;
 	}
-	if (is_pipe_token(args[i - 1]))
+	if (token_is(args[i - 1], "|"))
 		return (print_syntax_error(args[i - 1]));
 	return (0);
 }

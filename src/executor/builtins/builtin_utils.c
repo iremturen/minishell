@@ -6,32 +6,42 @@
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
 /*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
-/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 18:00:00 by azkaraka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-void	builtin_echo(char **argv)
+static int	parse_echo_n_flag(char **argv, int *i)
 {
-	int	i;
 	int	j;
-	int	newline;
+	int	found;
 
-	i = 1;
-	newline = 1;
-	while (argv[i] && argv[i][0] == '-' && argv[i][1])
+	found = 0;
+	while (argv[*i] && argv[*i][0] == '-' && argv[*i][1])
 	{
 		j = 1;
-		while (argv[i][j] == 'n')
+		while (argv[*i][j] == 'n')
 			j++;
-		if (argv[i][j] == '\0')
+		if (argv[*i][j] == '\0')
 		{
-			newline = 0;
-			i++;
+			found = 1;
+			(*i)++;
 		}
 		else
 			break ;
 	}
+	return (found);
+}
+
+void	builtin_echo(char **argv)
+{
+	int	i;
+	int	newline;
+
+	i = 1;
+	newline = 1;
+	if (parse_echo_n_flag(argv, &i))
+		newline = 0;
 	while (argv[i])
 	{
 		write(1, argv[i], ft_strlen(argv[i]));

@@ -6,7 +6,7 @@
 /*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
 /*                                                  #+#    #+#             */
 /*   Created: 2025/05/31 16:30:24 by azkaraka          #+#    #+#             */
-/*   Updated: 2026/07/04 21:30:00 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 18:00:00 by azkaraka         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../../../minishell.h"
@@ -42,6 +42,23 @@ static void	restore_fds(int sin, int sout)
 	close(sout);
 }
 
+static void	run_builtin_cmd(t_cmd *cmd, t_shell *shell)
+{
+	shell->last_exit = 0;
+	if (!ft_strncmp(cmd->argv[0], "echo", 5))
+		builtin_echo(cmd->argv);
+	else if (!ft_strncmp(cmd->argv[0], "pwd", 4))
+		builtin_pwd();
+	else if (!ft_strncmp(cmd->argv[0], "env", 4))
+		builtin_env(shell->envp);
+	else if (!ft_strncmp(cmd->argv[0], "cd", 3))
+		builtin_cd(cmd, shell);
+	else if (!ft_strncmp(cmd->argv[0], "unset", 6))
+		builtin_unset(cmd, shell);
+	else if (!ft_strncmp(cmd->argv[0], "export", 7))
+		builtin_export(cmd, shell);
+}
+
 void	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
 	int	sin;
@@ -55,20 +72,6 @@ void	execute_builtin(t_cmd *cmd, t_shell *shell)
 	if (!ft_strncmp(cmd->argv[0], "exit", 5))
 		builtin_exit(cmd, shell);
 	else
-	{
-		shell->last_exit = 0;
-		if (!ft_strncmp(cmd->argv[0], "echo", 5))
-			builtin_echo(cmd->argv);
-		else if (!ft_strncmp(cmd->argv[0], "pwd", 4))
-			builtin_pwd();
-		else if (!ft_strncmp(cmd->argv[0], "env", 4))
-			builtin_env(shell->envp);
-		else if (!ft_strncmp(cmd->argv[0], "cd", 3))
-			builtin_cd(cmd, shell);
-		else if (!ft_strncmp(cmd->argv[0], "unset", 6))
-			builtin_unset(cmd, shell);
-		else if (!ft_strncmp(cmd->argv[0], "export", 7))
-			builtin_export(cmd, shell);
-	}
+		run_builtin_cmd(cmd, shell);
 	restore_fds(sin, sout);
 }

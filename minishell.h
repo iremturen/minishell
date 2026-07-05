@@ -91,6 +91,14 @@ typedef struct s_fork_data
 	t_shell	*shell;
 }	t_fork_data;
 
+typedef struct s_hd_ctx
+{
+	t_redir	*redir;
+	t_shell	*shell;
+	int		*pipefd;
+	size_t	dlen;
+}	t_hd_ctx;
+
 typedef struct s_pipe_ctx
 {
 	int		prev_fd;
@@ -130,7 +138,7 @@ t_cmd		*new_cmd(void);
 void		free_cmds(t_cmd *head);
 t_redir		*new_redir(t_token_type type, char *file, int heredoc_expand);
 int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file,
-			int heredoc_expand);
+				int heredoc_expand);
 
 // expander
 void		expand_tokens(t_token *head, t_shell *shell);
@@ -148,9 +156,15 @@ void		execute_single(t_cmd *cmd, t_shell *shell);
 void		execute_pipeline(t_cmd *cmds, t_shell *shell);
 pid_t		pipeline_fork(t_cmd *cmd, t_fork_data *data);
 int			apply_redirs(t_redir *redir, t_shell *shell);
+void		setup_heredoc_signals(void);
+void		restore_heredoc_signals(t_shell *shell);
+void		print_eof_warning(char *delim);
+void		write_heredoc_line(int fd, char *line, t_shell *shell, int expand);
+char		*read_heredoc_line(int *got_eof);
 int			process_heredoc(t_redir *redir, t_shell *shell);
 int			prepare_heredocs(t_cmd *cmd, t_shell *shell);
 void		close_heredoc_fds(t_cmd *cmd);
+void		print_sorted_export(char **envp);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
