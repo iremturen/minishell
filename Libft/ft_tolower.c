@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 22:25:14 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/06/30 22:48:47 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:21 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

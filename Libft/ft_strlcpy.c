@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 18:32:42 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 04:28:57 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:11 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

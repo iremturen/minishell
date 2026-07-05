@@ -22,7 +22,6 @@ static int	open_redir_file(t_redir *r)
 	return (-1);
 }
 
-// redir tipine gore dosyayi acip dup2 ile yonlendiriyor
 static int	apply_single_redir(t_redir *r)
 {
 	int	fd;
@@ -63,7 +62,6 @@ static int	apply_heredoc(t_redir *redir, t_shell *shell)
 	return (1);
 }
 
-// redir listesini siraya gore uygular, basarisizlikta 0 doner
 int	apply_redirs(t_redir *redir, t_shell *shell)
 {
 	while (redir)

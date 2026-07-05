@@ -45,7 +45,6 @@ static int	run_pipe_step(t_cmd *cur, t_pipe_ctx *ctx)
 	return (1);
 }
 
-// tum alt surecleri bekler, gecersiz pid leri atlar, son exit kodunu gunceller
 static void	wait_cmds(t_pipe_ctx *ctx)
 {
 	int	status;
@@ -71,7 +70,6 @@ static void	wait_cmds(t_pipe_ctx *ctx)
 	}
 }
 
-// pipe zinciri kurar, her komutu fork layip stdin stdout baglantisini sagliyor
 void	execute_pipeline(t_cmd *cmds, t_shell *shell)
 {
 	t_pipe_ctx	ctx;

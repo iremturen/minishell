@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// envp icinde PATH= satirini bulup dizin listesine ceviriyor
 char	**find_path(char **envp)
 {
 	int		i;
@@ -31,7 +30,6 @@ char	**find_path(char **envp)
 	return (paths);
 }
 
-// path dizinleri icinde calistirilabilir komutu ariyor
 char	*find_command(char **paths, char *cmd)
 {
 	int		i;
@@ -56,7 +54,6 @@ char	*find_command(char **paths, char *cmd)
 	return (NULL);
 }
 
-// / varsa direk dener, yoksa PATH te arar
 char	*resolve_path(char *cmd, char **envp)
 {
 	char	**paths;
@@ -74,7 +71,6 @@ char	*resolve_path(char *cmd, char **envp)
 	return (result);
 }
 
-// execve cagirir, basarisizsa hata yazar ve dogru kod ile cikiyor
 void	exec_or_exit(t_cmd *cmd, char **envp)
 {
 	struct stat	path_stat;

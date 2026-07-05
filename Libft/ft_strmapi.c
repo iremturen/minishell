@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 00:05:33 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 00:24:25 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:15 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

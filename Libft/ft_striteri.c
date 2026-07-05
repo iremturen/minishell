@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_striteri.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/01 00:05:53 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 00:30:38 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:08 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

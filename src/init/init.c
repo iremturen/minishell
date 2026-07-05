@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// shell->envp icin hafiza ayiriyoruz, envp'nin uzunlugunu sayiyoruz
 static int	copy_envp(t_shell *shell, char **envp)
 {
 	int	i;
@@ -34,7 +33,6 @@ static int	copy_envp(t_shell *shell, char **envp)
 	return (1);
 }
 
-// t_shell yapisini hazir hale getiriyor, envp'yi kopyaliyor
 t_shell	*init_shell(char **envp)
 {
 	t_shell	*shell;
@@ -52,7 +50,6 @@ t_shell	*init_shell(char **envp)
 	return (shell);
 }
 
-// hem envp dizisini hem de shell yapisini tamamen siliyor
 void	free_shell(t_shell *shell)
 {
 	int	i;

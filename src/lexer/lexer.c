@@ -26,7 +26,6 @@ static t_token_type	get_token_type(char *value)
 	return (TOK_WORD);
 }
 
-// yeni token dugumu olusturuyor, tipi satir icerigine gore belirleniyor
 static t_token	*new_token(char *value)
 {
 	t_token	*tok;
@@ -49,7 +48,6 @@ static t_token	*new_token(char *value)
 	return (tok);
 }
 
-// bagli listeye token ekliyor, hata durumunda null doner
 static t_token	*append_token(t_token **head, t_token **tail, char *word)
 {
 	t_token	*tok;
@@ -65,7 +63,6 @@ static t_token	*append_token(t_token **head, t_token **tail, char *word)
 	return (tok);
 }
 
-// words dizisinden token bagli listesi olusturuyor
 static t_token	*build_token_list(char **words)
 {
 	t_token	*head;
@@ -87,7 +84,6 @@ static t_token	*build_token_list(char **words)
 	return (head);
 }
 
-// satiri tokenize eder; syntax hatasi icin last_exit=2 set eder
 t_token	*tokenize(char *line, t_shell *shell)
 {
 	char	**words;

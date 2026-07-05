@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// builtin i forked child sureci icinde direkt calistiriyor
 static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 {
 	shell->last_exit = 0;
@@ -32,7 +31,6 @@ static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 	exit(shell->last_exit);
 }
 
-// child sureci: fd leri ayarlar, redir uygular, komutu calistirip cikiyor
 static void	exec_child(t_cmd *cmd, t_fork_data *data)
 {
 	setup_signals_child();
@@ -61,7 +59,6 @@ static void	exec_child(t_cmd *cmd, t_fork_data *data)
 	exec_or_exit(cmd, data->shell->envp);
 }
 
-// fork yapar, parent ta gereksiz write ucunu kapatir
 pid_t	pipeline_fork(t_cmd *cmd, t_fork_data *data)
 {
 	pid_t	pid;

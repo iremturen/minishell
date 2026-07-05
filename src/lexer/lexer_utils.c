@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// char** dizisini eleman eleman serbest birakiyor
 void	free_array(char **arr)
 {
 	int	i;

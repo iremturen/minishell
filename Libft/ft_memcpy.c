@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/25 13:48:33 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/10 18:47:52 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:00 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

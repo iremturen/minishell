@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// ctrl+c: input bufferini temizler, yeni satir basip promptu tazeler
 static void	sigint_handler(int sig)
 {
 	set_signal(sig);
@@ -19,7 +18,6 @@ static void	sigint_handler(int sig)
 	reset_readline_line();
 }
 
-// interaktif mod: ctrl+c yakala, ctrl+\ ve sigpipe yoksay
 void	setup_signals_interactive(void)
 {
 	struct sigaction	sa;
@@ -32,7 +30,6 @@ void	setup_signals_interactive(void)
 	signal(SIGPIPE, SIG_IGN);
 }
 
-// child sureci: her iki sinyal icin varsayilan davranisi geri yukle
 void	setup_signals_child(void)
 {
 	signal(SIGINT, SIG_DFL);

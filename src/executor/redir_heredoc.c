@@ -11,14 +11,12 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// heredoc sirasindaki sigint: status set eder, satir atlayip cikiyor
 static void	heredoc_sigint(int sig)
 {
 	set_signal(sig);
 	write(1, "\n", 1);
 }
 
-// heredoc satiri: $ degiskenlerini genisletip pipe e yaziyor
 static void	write_expanded_line(int fd, char *line, t_shell *shell)
 {
 	char	*exp;
@@ -34,7 +32,6 @@ static void	write_expanded_line(int fd, char *line, t_shell *shell)
 	write(fd, "\n", 1);
 }
 
-// heredoc: delimiter gelene kadar okur, ctrl+c ve expansion destekli
 int	process_heredoc(char *delim, t_shell *shell)
 {
 	int		pipefd[2];

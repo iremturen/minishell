@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// yeni bir yonlendirme dugumu olusturuyor
 t_redir	*new_redir(t_token_type type, char *file)
 {
 	t_redir	*redir;
@@ -32,7 +31,6 @@ t_redir	*new_redir(t_token_type type, char *file)
 	return (redir);
 }
 
-// komutun redir listesinin sonuna yeni redir ekliyor
 int	cmd_add_redir(t_cmd *cmd, t_token_type type, char *file)
 {
 	t_redir	*redir;
@@ -53,7 +51,6 @@ int	cmd_add_redir(t_cmd *cmd, t_token_type type, char *file)
 	return (1);
 }
 
-// yeni bos bir komut dugumu olusturuyor
 t_cmd	*new_cmd(void)
 {
 	t_cmd	*cmd;
@@ -95,7 +92,6 @@ static void	free_single_cmd(t_cmd *cmd)
 	free(cmd);
 }
 
-// t_cmd bagli listesini baslindan sonuna kadar temizliyor
 void	free_cmds(t_cmd *head)
 {
 	t_cmd	*next;

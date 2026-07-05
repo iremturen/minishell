@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// declare -x KEY="VALUE" formatinda bir env satirini yazıyor
 static void	print_export_entry(char *entry)
 {
 	char	*eq;
@@ -30,7 +29,6 @@ static void	print_export_entry(char *entry)
 	write(1, "\"\n", 2);
 }
 
-// export key gecerli mi: harf/_ ile baslamali, harf/rakam/_ olmali
 static int	is_valid_key(char *key)
 {
 	int	i;
@@ -49,7 +47,6 @@ static int	is_valid_key(char *key)
 	return (1);
 }
 
-// gecersiz export argumani icin hata mesaji yazar
 static void	print_export_error(char *arg)
 {
 	write(2, "minishell: export: '", 20);
@@ -57,7 +54,6 @@ static void	print_export_error(char *arg)
 	write(2, "': not a valid identifier\n", 26);
 }
 
-// tek bir KEY=VAL argumani isliyor, env e ekliyor; hata olursa 1 doner
 static int	do_export_one(char *arg, t_shell *shell)
 {
 	char	*eq;
@@ -84,7 +80,6 @@ static int	do_export_one(char *arg, t_shell *shell)
 	return (0);
 }
 
-// export: argumansiz tum env i listeler, varsa her KEY=VAL ciftini ekler
 void	builtin_export(t_cmd *cmd, t_shell *shell)
 {
 	int	i;

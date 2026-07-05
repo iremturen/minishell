@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/31 15:17:02 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 00:59:07 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:01 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

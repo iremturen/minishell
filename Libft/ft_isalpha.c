@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 19:08:45 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/10 19:08:56 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:25:53 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

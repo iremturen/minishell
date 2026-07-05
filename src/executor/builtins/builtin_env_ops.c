@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// envp ye key=val ekliyor ya da guncelliyior
 int	env_set(t_shell *shell, char *key, char *val)
 {
 	char	*entry;
@@ -35,7 +34,6 @@ int	env_set(t_shell *shell, char *key, char *val)
 	return (1);
 }
 
-// cd hedef dizini hesapliyor: no-arg HOME, "-" OLDPWD, digeri argv[1]
 static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
 	int	idx;
@@ -63,7 +61,6 @@ static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 	return (cmd->argv[1]);
 }
 
-// cd: argumansiz HOME a, "-" ile OLDPWD e, verilen yola gider
 void	builtin_cd(t_cmd *cmd, t_shell *shell)
 {
 	char	*path;
@@ -93,7 +90,6 @@ void	builtin_cd(t_cmd *cmd, t_shell *shell)
 		env_set(shell, "PWD", cwd);
 }
 
-// unset: argv listesindeki tum degiskenleri envp den siliyor
 void	builtin_unset(t_cmd *cmd, t_shell *shell)
 {
 	int	idx;

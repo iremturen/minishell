@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// argv dizisini bir buyuk yeni dizi olarak kopyalayip donduruyor
 static char	**grow_argv(char **old, int len)
 {
 	char	**tmp;
@@ -31,7 +30,6 @@ static char	**grow_argv(char **old, int len)
 	return (tmp);
 }
 
-// komuta yeni arguman ekliyor, eski argv yi serbest birakiyor
 static int	cmd_add_arg(t_cmd *cmd, char *word)
 {
 	int		len;
@@ -54,7 +52,6 @@ static int	cmd_add_arg(t_cmd *cmd, char *word)
 	return (1);
 }
 
-// redir tokenini isliyip sonraki tokeni dosya adi olarak aliyor
 static int	handle_redir(t_cmd *cmd, t_token **cur)
 {
 	t_token_type	type;
@@ -90,7 +87,6 @@ static int	parse_token(t_token **tok, t_cmd **cur)
 	return (1);
 }
 
-// tok_word, tok_pipe ve tok_redir tokenlarini isliyor
 t_cmd	*parse(t_token *tokens)
 {
 	t_cmd	*head;

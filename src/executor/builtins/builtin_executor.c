@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// stdin ve stdout un kopyasini aliyor, redir uyguluyor
 static int	save_and_redir(t_cmd *cmd, int *sin, int *sout, t_shell *shell)
 {
 	*sin = dup(STDIN_FILENO);
@@ -35,7 +34,6 @@ static int	save_and_redir(t_cmd *cmd, int *sin, int *sout, t_shell *shell)
 	return (1);
 }
 
-// kaydedilen stdin ve stdout u geri yukluyor
 static void	restore_fds(int sin, int sout)
 {
 	dup2(sin, STDIN_FILENO);
@@ -44,7 +42,6 @@ static void	restore_fds(int sin, int sout)
 	close(sout);
 }
 
-// builtin i redir uygulayarak calistiriyor, fd leri geri yukluyor
 void	execute_builtin(t_cmd *cmd, t_shell *shell)
 {
 	int	sin;

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// redir-only komut: > file gibi. child fork edip rediri uygulayip cikiyor
 static void	execute_redir_only(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;
@@ -35,7 +34,6 @@ static void	execute_redir_only(t_cmd *cmd, t_shell *shell)
 		shell->last_exit = WEXITSTATUS(status);
 }
 
-// cmd->next varsa pipeline a yonlendir, yoksa tek komut calistir
 void	execute_cmd(t_cmd *cmd, t_shell *shell)
 {
 	if (!cmd)

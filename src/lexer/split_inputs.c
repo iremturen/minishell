@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// tek karakterlik veya cift karakterlik operatoru space ile sararak res e yazar
 static int	handle_op(char *line, char *res, int *j, int i)
 {
 	if (line[i] == '>' && line[i + 1] == '>')
@@ -49,7 +48,6 @@ static int	update_quote(char c, int q)
 	return (q);
 }
 
-// operatorlerin etrafina space ekler, quote icindeki operatorlere dokunmaz
 static char	*add_spaces(char *line)
 {
 	char	*res;
@@ -75,7 +73,6 @@ static char	*add_spaces(char *line)
 	return (res);
 }
 
-// quote a duyarli split: quote icindeki space leri token sinirlari saymaz
 static char	**split_q(char *s)
 {
 	char	**arr;
@@ -105,7 +102,6 @@ static char	**split_q(char *s)
 	return (arr);
 }
 
-// satiri operator bolumlere ayiriyor, quote duyarli split kullanir
 char	**split_inputs(char *line)
 {
 	char	*tmp;

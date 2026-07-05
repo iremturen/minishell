@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// echo: ardisik -n bayraklarini atlar, kalan argumanlari yazar
 void	builtin_echo(char **argv)
 {
 	int	i;
@@ -35,7 +34,6 @@ void	builtin_echo(char **argv)
 		write(1, "\n", 1);
 }
 
-// pwd: gecerli calisma dizinini yazıyor
 void	builtin_pwd(void)
 {
 	char	cwd[1024];
@@ -49,7 +47,6 @@ void	builtin_pwd(void)
 		perror("pwd");
 }
 
-// env: envp deki tum degiskenleri yazıyor
 void	builtin_env(char **envp)
 {
 	int	i;
@@ -63,7 +60,6 @@ void	builtin_env(char **envp)
 	}
 }
 
-// is_builtin: komut adinin builtin olup olmadigini kontrol ediyor
 int	is_builtin(char *cmd)
 {
 	if (!cmd)

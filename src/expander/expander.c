@@ -25,7 +25,6 @@ static int	expand_exit_status(char **res, int *i, t_shell *shell)
 	return (ret);
 }
 
-// $ den sonraki degiskeni genisletiyor: $? exit kodu, $VAR env degeri
 static int	expand_dollar(char **res, char *str, int *i, t_shell *shell)
 {
 	char	*name;
@@ -49,7 +48,6 @@ static int	expand_dollar(char **res, char *str, int *i, t_shell *shell)
 	return (1);
 }
 
-// token degerini tarayip $ genisletmesi yaparak yeni string uretir
 char	*build_expanded(char *str, t_shell *shell)
 {
 	char	*res;
@@ -76,7 +74,6 @@ char	*build_expanded(char *str, t_shell *shell)
 	return (res);
 }
 
-// her tok_word icin build_expanded cagirip degeri gunceller
 void	expand_tokens(t_token *head, t_shell *shell)
 {
 	char	*new_val;

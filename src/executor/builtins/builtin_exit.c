@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../../minishell.h"
 
-// verilen string tamamen sayisal mi kontrol ediyor
 static int	is_numeric(char *s)
 {
 	int	i;
@@ -30,7 +29,6 @@ static int	is_numeric(char *s)
 	return (1);
 }
 
-// exit: sayi degil ise 255, cok arguman ise hata, gecerliyse cikiyor
 void	builtin_exit(t_cmd *cmd, t_shell *shell)
 {
 	write(1, "exit\n", 5);

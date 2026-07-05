@@ -32,7 +32,6 @@ static int	handle_quote_char(char c, int *q)
 	return (0);
 }
 
-// tirnak karakterlerini silerek temiz bir string donduruyor
 static char	*strip_one(char *str)
 {
 	char	*res;
@@ -57,7 +56,6 @@ static char	*strip_one(char *str)
 	return (res);
 }
 
-// her tok_word degerinden tirnak karakterlerini temizliyor
 void	handle_quotes(t_token *head)
 {
 	char	*stripped;

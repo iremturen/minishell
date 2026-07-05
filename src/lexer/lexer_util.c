@@ -45,7 +45,6 @@ size_t	get_spaced_len(char *line)
 	return (len + 1);
 }
 
-// tirnaklarin kapanip kapanmadigini kontrol ediyor, acik kalirsa 1 doner
 int	has_unclosed_quotes(char *line)
 {
 	int	q;
@@ -68,7 +67,6 @@ int	has_unclosed_quotes(char *line)
 	return (q != Q_NONE);
 }
 
-// kelime sonunu bulur: quote icindeki space lari atlar
 int	word_end_q(char *s, int i)
 {
 	int	q;
@@ -91,7 +89,6 @@ int	word_end_q(char *s, int i)
 	return (i);
 }
 
-// quote a gore kelime sayar
 int	count_words_q(char *s)
 {
 	int	i;

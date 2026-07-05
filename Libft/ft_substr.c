@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: azkaraka <azkaraka@student.42istanbul.com  +#+  +:+       +#+        */
+/*   By: ituren <ituren@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/11 14:36:30 by azkaraka          #+#    #+#             */
-/*   Updated: 2025/07/01 00:03:55 by azkaraka         ###   ########.fr       */
+/*   Updated: 2026/07/05 12:26:20 by ituren           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

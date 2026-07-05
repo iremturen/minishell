@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../../minishell.h"
 
-// komut yok ya da izinsiz: 127/126 ile hata yazdirir
 static void	cmd_not_found(t_cmd *cmd, t_shell *shell)
 {
 	write(2, "minishell: ", 11);
@@ -28,7 +27,6 @@ static void	cmd_not_found(t_cmd *cmd, t_shell *shell)
 	}
 }
 
-// child bitince exit durumunu last_exit e yazar
 static void	update_exit_status(int status, t_shell *shell)
 {
 	if (WIFEXITED(status))
@@ -51,7 +49,6 @@ static void	exec_single_child(t_cmd *cmd, t_shell *shell)
 	exec_or_exit(cmd, shell->envp);
 }
 
-// tek bir dis komutu fork ile calistiriyor, last_exit i gunceller
 void	execute_single(t_cmd *cmd, t_shell *shell)
 {
 	pid_t	pid;

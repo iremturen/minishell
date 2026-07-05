@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-// her satiri ilgili katmanlara gonderip sonuclari temizliyor
 static void	run_line(char *line, t_shell *shell)
 {
 	t_token	*tokens;
@@ -38,7 +37,6 @@ static void	run_line(char *line, t_shell *shell)
 	free_tokens(tokens);
 }
 
-// readline NULL dondu: ctrl+c ise devam et (1), ctrl+d ise cik (0)
 static int	handle_null_line(void)
 {
 	if (get_signal() == SIGINT)
@@ -50,7 +48,6 @@ static int	handle_null_line(void)
 	return (0);
 }
 
-// satiri isle: ctrl+c sonrasi $? = 130, sonra calistir ve bellek temizle
 static void	handle_line(char *line, t_shell *shell)
 {
 	if (get_signal() == SIGINT)
@@ -82,7 +79,6 @@ static void	shell_loop(t_shell *shell)
 	}
 }
 
-// ana dongu: readline ile satir aliyor, isleme sokuyor
 int	main(int argc, char **argv, char **env)
 {
 	t_shell	*shell;
