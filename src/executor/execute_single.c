@@ -45,8 +45,8 @@ static void	exec_single_child(t_cmd *cmd, t_shell *shell)
 {
 	setup_signals_child();
 	if (!apply_redirs(cmd->redirs, shell))
-		exit(1);
-	exec_or_exit(cmd, shell->envp);
+		child_exit(1, shell);
+	exec_or_exit(cmd, shell);
 }
 
 void	execute_single(t_cmd *cmd, t_shell *shell)

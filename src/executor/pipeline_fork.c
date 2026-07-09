@@ -28,7 +28,7 @@ static void	exec_builtin_child(t_cmd *cmd, t_shell *shell)
 		builtin_export(cmd, shell);
 	else if (!ft_strncmp(cmd->argv[0], "exit", 5))
 		builtin_exit(cmd, shell);
-	exit(shell->last_exit);
+	child_exit(shell->last_exit, shell);
 }
 
 static void	exec_child(t_cmd *cmd, t_fork_data *data)
@@ -45,7 +45,7 @@ static void	exec_child(t_cmd *cmd, t_fork_data *data)
 		close(data->out_fd);
 	}
 	if (!apply_redirs(cmd->redirs, data->shell))
-		exit(1);
+		child_exit(1, data->shell);
 	if (is_builtin(cmd->argv[0]))
 		exec_builtin_child(cmd, data->shell);
 	cmd->cmd_path = resolve_path(cmd->argv[0], data->shell->envp);
@@ -54,9 +54,9 @@ static void	exec_child(t_cmd *cmd, t_fork_data *data)
 		write(2, "minishell: ", 11);
 		write(2, cmd->argv[0], ft_strlen(cmd->argv[0]));
 		write(2, ": command not found\n", 20);
-		exit(127);
+		child_exit(127, data->shell);
 	}
-	exec_or_exit(cmd, data->shell->envp);
+	exec_or_exit(cmd, data->shell);
 }
 
 pid_t	pipeline_fork(t_cmd *cmd, t_fork_data *data)

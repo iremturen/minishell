@@ -21,8 +21,8 @@ static void	execute_redir_only(t_cmd *cmd, t_shell *shell)
 	{
 		setup_signals_child();
 		if (!apply_redirs(cmd->redirs, shell))
-			exit(1);
-		exit(0);
+			child_exit(1, shell);
+		child_exit(0, shell);
 	}
 	if (pid == -1)
 	{

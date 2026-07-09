@@ -71,7 +71,7 @@ char	*resolve_path(char *cmd, char **envp)
 	return (result);
 }
 
-static void	exec_print_err(t_cmd *cmd)
+static void	exec_print_err(t_cmd *cmd, t_shell *shell)
 {
 	struct stat	path_stat;
 
@@ -81,32 +81,32 @@ static void	exec_print_err(t_cmd *cmd)
 		&& S_ISDIR(path_stat.st_mode))
 	{
 		write(2, ": is a directory\n", 17);
-		exit(126);
+		child_exit(126, shell);
 	}
 	if (errno == ENOENT)
 	{
 		write(2, ": No such file or directory\n", 28);
-		exit(127);
+		child_exit(127, shell);
 	}
 	if (errno == EACCES)
 	{
 		write(2, ": Permission denied\n", 20);
-		exit(126);
+		child_exit(126, shell);
 	}
 	write(2, ": ", 2);
 	write(2, strerror(errno), ft_strlen(strerror(errno)));
 	write(2, "\n", 1);
-	exit(126);
+	child_exit(126, shell);
 }
 
-void	exec_or_exit(t_cmd *cmd, char **envp)
+void	exec_or_exit(t_cmd *cmd, t_shell *shell)
 {
 	char	**exec_env;
 
-	exec_env = build_exec_envp(envp);
+	exec_env = build_exec_envp(shell->envp);
 	if (!exec_env)
-		exit(1);
+		child_exit(1, shell);
 	execve(cmd->cmd_path, cmd->argv, exec_env);
 	free(exec_env);
-	exec_print_err(cmd);
+	exec_print_err(cmd, shell);
 }
