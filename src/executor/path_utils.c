@@ -80,7 +80,7 @@ static void	exec_print_err(t_cmd *cmd, t_shell *shell)
 	if (cmd->cmd_path && stat(cmd->cmd_path, &path_stat) == 0
 		&& S_ISDIR(path_stat.st_mode))
 	{
-		write(2, ": is a directory\n", 17);
+		write(2, ": Is a directory\n", 17);
 		child_exit(126, shell);
 	}
 	if (errno == ENOENT)
