@@ -53,35 +53,32 @@ int	env_export(t_shell *shell, char *key)
 	return (1);
 }
 
-static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
+static char	*env_path_or_err(t_shell *shell, char *key, char *err)
 {
 	int	idx;
 
-		if (cmd->argv[1] && cmd->argv[2])
+	idx = env_find(shell->envp, key);
+	if (idx == -1)
+	{
+		write(2, err, ft_strlen(err));
+		return (NULL);
+	}
+	return (ft_strchr(shell->envp[idx], '=') + 1);
+}
+
+static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
+{
+	if (cmd->argv[1] && cmd->argv[2])
 	{
 		write(2, "minishell: cd: too many arguments\n", 34);
 		return (NULL);
 	}
 	if (!cmd->argv[1])
-	{
-		idx = env_find(shell->envp, "HOME");
-		if (idx == -1)
-		{
-			write(2, "minishell: cd: HOME not set\n", 28);
-			return (NULL);
-		}
-		return (ft_strchr(shell->envp[idx], '=') + 1);
-	}
+		return (env_path_or_err(shell,
+				"HOME", "minishell: cd: HOME not set\n"));
 	if (ft_strncmp(cmd->argv[1], "-", 2) == 0)
-	{
-		idx = env_find(shell->envp, "OLDPWD");
-		if (idx == -1)
-		{
-			write(2, "minishell: cd: OLDPWD not set\n", 30);
-			return (NULL);
-		}
-		return (ft_strchr(shell->envp[idx], '=') + 1);
-	}
+		return (env_path_or_err(shell, "OLDPWD",
+				"minishell: cd: OLDPWD not set\n"));
 	return (cmd->argv[1]);
 }
 
