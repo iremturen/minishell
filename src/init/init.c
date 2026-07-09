@@ -74,6 +74,7 @@ void	child_exit(int status, t_shell *shell)
 		free_tokens(shell->all_tokens);
 	if (shell->all_cmds)
 		free_cmds(shell->all_cmds);
+	clear_history();
 	free_shell(shell);
 	exit(status);
 }
