@@ -11,10 +11,24 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
+static void	process_tokens(t_token *tokens, t_shell *shell)
+{
+	t_cmd	*cmds;
+
+	cmds = parse(tokens);
+	if (!cmds)
+		return ;
+	shell->all_cmds = cmds;
+	shell->all_tokens = tokens;
+	execute_cmd(cmds, shell);
+	shell->all_cmds = NULL;
+	shell->all_tokens = NULL;
+	free_cmds(cmds);
+}
+
 static void	run_line(char *line, t_shell *shell)
 {
 	t_token	*tokens;
-	t_cmd	*cmds;
 
 	if (has_unclosed_quotes(line))
 	{
@@ -28,23 +42,8 @@ static void	run_line(char *line, t_shell *shell)
 	expand_tokens(tokens, shell);
 	filter_empty_tokens(&tokens);
 	handle_quotes(tokens);
-	cmds = parse(tokens);
-	if (cmds)
-	{
-		shell->all_cmds = cmds;
-		shell->all_tokens = tokens;
-		execute_cmd(cmds, shell);
-		shell->all_cmds = NULL;
-		shell->all_tokens = NULL;
-		free_cmds(cmds);
-	}
+	process_tokens(tokens, shell);
 	free_tokens(tokens);
-}
-
-static int	handle_null_line(void)
-{
-	write(1, "exit\n", 5);
-	return (0);
 }
 
 static void	handle_line(char *line, t_shell *shell)
@@ -70,8 +69,7 @@ static void	shell_loop(t_shell *shell)
 		line = readline(PROMPT);
 		if (!line)
 		{
-			if (handle_null_line())
-				continue ;
+			write(1, "exit\n", 5);
 			break ;
 		}
 		handle_line(line, shell);
@@ -91,7 +89,7 @@ int	main(int argc, char **argv, char **env)
 	setup_signals_interactive(shell);
 	shell_loop(shell);
 	exit_code = shell->last_exit;
-	clear_history();
+	cleanup_readline_history();
 	free_shell(shell);
 	return (exit_code);
 }

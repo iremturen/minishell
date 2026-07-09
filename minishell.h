@@ -106,6 +106,7 @@ typedef struct s_pipe_ctx
 
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
+void		cleanup_readline_history(void);
 void		child_exit(int status, t_shell *shell);
 void		print_prompt_if_needed(void);
 void		setup_signals_interactive(t_shell *shell);

@@ -75,6 +75,7 @@ void	child_exit(int status, t_shell *shell)
 	if (shell->all_cmds)
 		free_cmds(shell->all_cmds);
 	clear_history();
+	rl_clear_history();
 	free_shell(shell);
 	exit(status);
 }

@@ -32,3 +32,9 @@ void	clear_signal(void)
 {
 	*signal_status() = 0;
 }
+
+void	cleanup_readline_history(void)
+{
+	clear_history();
+	rl_clear_history();
+}
