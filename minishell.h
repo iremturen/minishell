@@ -27,7 +27,6 @@
 
 # define PROMPT "minishell$ "
 
-// token tipleri: kelime, pipe, yonlendirme operatorleri
 typedef enum e_token_type
 {
 	TOK_WORD,
@@ -38,7 +37,6 @@ typedef enum e_token_type
 	TOK_HEREDOC
 }	t_token_type;
 
-// tirnak durumu: yok, tek, cift
 typedef enum e_quote_state
 {
 	Q_NONE,
@@ -46,7 +44,6 @@ typedef enum e_quote_state
 	Q_DOUBLE
 }	t_quote_state;
 
-// lexer token dugumu
 typedef struct s_token
 {
 	char			*value;
@@ -55,7 +52,6 @@ typedef struct s_token
 	struct s_token	*next;
 }	t_token;
 
-// yonlendirme bilgisi: dosya adi, heredoc delimiter, fd, tip
 typedef struct s_redir
 {
 	char			*file;
@@ -66,7 +62,6 @@ typedef struct s_redir
 	struct s_redir	*next;
 }	t_redir;
 
-// bir komut dugumu: argümanlar, yol, builtın mi, yonlendirmeler
 typedef struct s_cmd
 {
 	char			**argv;
@@ -76,7 +71,6 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 }	t_cmd;
 
-// genel shell durumu: env kopyasi ve son exit kodu
 typedef struct s_shell
 {
 	char	**envp;
@@ -108,7 +102,6 @@ typedef struct s_pipe_ctx
 	t_shell	*shell;
 }	t_pipe_ctx;
 
-// init
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
 void		print_prompt_if_needed(void);
@@ -119,7 +112,6 @@ int			get_signal(void);
 void		set_signal(int sig);
 void		clear_signal(void);
 
-// lexer
 t_token		*tokenize(char *line, t_shell *shell);
 void		free_tokens(t_token *head);
 int			is_operator(char c);
@@ -132,7 +124,6 @@ int			word_end_q(char *s, int i);
 int			count_words_q(char *s);
 void		free_array(char **arr);
 
-// parser
 t_cmd		*parse(t_token *tokens);
 t_cmd		*new_cmd(void);
 void		free_cmds(t_cmd *head);
@@ -140,7 +131,6 @@ t_redir		*new_redir(t_token_type type, char *file, int heredoc_expand);
 int			cmd_add_redir(t_cmd *cmd, t_token_type type, char *file,
 				int heredoc_expand);
 
-// expander
 void		expand_tokens(t_token *head, t_shell *shell);
 char		*build_expanded(char *str, t_shell *shell);
 void		filter_empty_tokens(t_token **head);
@@ -149,7 +139,6 @@ char		*get_env_val(char *name, char **envp);
 int			str_append(char **dest, char *src);
 int			append_char(char **res, char c);
 
-// executor
 void		execute_cmd(t_cmd *cmd, t_shell *shell);
 void		execute_builtin(t_cmd *cmd, t_shell *shell);
 void		execute_single(t_cmd *cmd, t_shell *shell);
@@ -170,7 +159,6 @@ char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
 void		exec_or_exit(t_cmd *cmd, char **envp);
 
-// builtins
 int			is_builtin(char *cmd);
 void		builtin_echo(char **argv);
 void		builtin_pwd(void);
