@@ -42,6 +42,8 @@ t_shell	*init_shell(char **envp)
 		return (NULL);
 	shell->envp = NULL;
 	shell->last_exit = 0;
+	shell->all_cmds = NULL;
+	shell->all_tokens = NULL;
 	if (!copy_envp(shell, envp))
 	{
 		free_shell(shell);
@@ -64,6 +66,16 @@ void	free_shell(t_shell *shell)
 		free(shell->envp);
 	}
 	free(shell);
+}
+
+void	child_exit(int status, t_shell *shell)
+{
+	if (shell->all_tokens)
+		free_tokens(shell->all_tokens);
+	if (shell->all_cmds)
+		free_cmds(shell->all_cmds);
+	free_shell(shell);
+	exit(status);
 }
 
 void	print_prompt_if_needed(void)

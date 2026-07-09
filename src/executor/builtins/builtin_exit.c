@@ -33,13 +33,13 @@ void	builtin_exit(t_cmd *cmd, t_shell *shell)
 {
 	write(1, "exit\n", 5);
 	if (!cmd->argv[1])
-		exit(shell->last_exit);
+		child_exit(shell->last_exit, shell);
 	if (!is_numeric(cmd->argv[1]))
 	{
 		write(2, "minishell: exit: ", 17);
 		write(2, cmd->argv[1], ft_strlen(cmd->argv[1]));
 		write(2, ": numeric argument required\n", 28);
-		exit(2);
+		child_exit(shell->last_exit, shell);
 	}
 	if (cmd->argv[2])
 	{
@@ -47,5 +47,5 @@ void	builtin_exit(t_cmd *cmd, t_shell *shell)
 		shell->last_exit = 1;
 		return ;
 	}
-	exit((unsigned char)ft_atoi(cmd->argv[1]));
+	child_exit((unsigned char)ft_atoi(cmd->argv[1]), shell);
 }

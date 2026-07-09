@@ -73,8 +73,10 @@ typedef struct s_cmd
 
 typedef struct s_shell
 {
-	char	**envp;
-	int		last_exit;
+	char		**envp;
+	int			last_exit;
+	t_cmd		*all_cmds;
+	t_token		*all_tokens;
 }	t_shell;
 
 typedef struct s_fork_data
@@ -104,6 +106,7 @@ typedef struct s_pipe_ctx
 
 t_shell		*init_shell(char **envp);
 void		free_shell(t_shell *shell);
+void		child_exit(int status, t_shell *shell);
 void		print_prompt_if_needed(void);
 void		setup_signals_interactive(t_shell *shell);
 void		setup_signals_child(void);
@@ -157,7 +160,7 @@ void		print_sorted_export(char **envp);
 char		**find_path(char **envp);
 char		*find_command(char **paths, char *cmd);
 char		*resolve_path(char *cmd, char **envp);
-void		exec_or_exit(t_cmd *cmd, char **envp);
+void		exec_or_exit(t_cmd *cmd, t_shell *shell);
 
 int			is_builtin(char *cmd);
 void		builtin_echo(char **argv);

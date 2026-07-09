@@ -31,7 +31,11 @@ static void	run_line(char *line, t_shell *shell)
 	cmds = parse(tokens);
 	if (cmds)
 	{
+		shell->all_cmds = cmds;
+		shell->all_tokens = tokens;
 		execute_cmd(cmds, shell);
+		shell->all_cmds = NULL;
+		shell->all_tokens = NULL;
 		free_cmds(cmds);
 	}
 	free_tokens(tokens);
