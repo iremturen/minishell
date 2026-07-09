@@ -57,6 +57,11 @@ static char	*get_cd_path(t_cmd *cmd, t_shell *shell)
 {
 	int	idx;
 
+		if (cmd->argv[1] && cmd->argv[2])
+	{
+		write(2, "minishell: cd: too many arguments\n", 34);
+		return (NULL);
+	}
 	if (!cmd->argv[1])
 	{
 		idx = env_find(shell->envp, "HOME");
